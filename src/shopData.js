@@ -1,9 +1,11 @@
+import { normalizedItemKind } from './itemTypes.js';
+
 export const initialItems = [
-  { id: 'potion', name: 'Gyógyital', rarity: 'Gyakori', kind: 'Csodás tárgy', category: 'Ital', stock: 12, price: 50, image: '/assets/potion.png', teaser: 'Visszaállít 2d4 + 2 életerőt.', description: 'Mélyvörös, szikrázó folyadék egy gondosan zárt üvegben.', effect: 'Elfogyasztásakor 2d4 + 2 életerőt állít vissza.' },
+  { id: 'potion', name: 'Gyógyital', rarity: 'Gyakori', kind: 'Ital', category: 'Gyógyital', stock: 12, price: 50, image: '/assets/potion.png', teaser: 'Visszaállít 2d4 + 2 életerőt.', description: 'Mélyvörös, szikrázó folyadék egy gondosan zárt üvegben.', effect: 'Elfogyasztásakor 2d4 + 2 életerőt állít vissza.' },
   { id: 'bag', name: 'Bag of Holding', rarity: 'Nem gyakori', kind: 'Csodás tárgy', category: 'Táska', stock: 2, price: 400, image: '/assets/bag.png', teaser: 'Tágas belső tér egy másik síkhoz kapcsolva.', description: 'Kívülről közönséges bőrtáska, belül meglepően tágas.', effect: 'A belseje jóval több felszerelést képes tárolni, mint amennyit a külseje sejtet.' },
   { id: 'cloak', name: 'Köpeny az oltalomhoz', rarity: 'Nem gyakori', kind: 'Csodás tárgy', category: 'Köpeny', stock: 1, price: 400, image: '/assets/cloak-cutout.png', teaser: '+1 bónusz AC-re és mentődobásokra.', description: 'Ezt a finoman hímzett köpenyt gyakran viselik az úton járók, akiknek nagyobb védelemre van szükségük a világ veszélyei ellen.', effect: 'Míg viseled a köpenyt, +1 bónuszt kapsz a páncélosztályodra (AC), valamint a mentődobásokra. Összehangolódást igényel.' },
-  { id: 'scroll', name: 'Varázstekercs: Pajzs', rarity: 'Gyakori', kind: 'Varázstekercs', category: 'Tekercs', stock: 5, price: 50, image: '/assets/scroll.png', teaser: '1. szintű abjurációs varázslat.', description: 'Vörös viasszal lezárt, mágikus jelekkel írt tekercs.', effect: 'A Pajzs varázslatot tartalmazza; használat után a tekercs megsemmisül.' },
-  { id: 'ring', name: 'Tűzellenállás gyűrűje', rarity: 'Ritka', kind: 'Csodás tárgy', category: 'Gyűrű', stock: 1, price: 4000, image: '/assets/ring.png', teaser: 'Ellenállást ad a tűzsebzéssel szemben.', description: 'Rubinkővel díszített aranygyűrű, amely langyosnak érződik az ujjon.', effect: 'A viselőjének ellenállást ad a tűzsebzéssel szemben.' },
+  { id: 'scroll', name: 'Varázstekercs: Pajzs', rarity: 'Gyakori', kind: 'Tekercs', category: 'Varázstekercs', stock: 5, price: 50, image: '/assets/scroll.png', teaser: '1. szintű abjurációs varázslat.', description: 'Vörös viasszal lezárt, mágikus jelekkel írt tekercs.', effect: 'A Pajzs varázslatot tartalmazza; használat után a tekercs megsemmisül.' },
+  { id: 'ring', name: 'Tűzellenállás gyűrűje', rarity: 'Ritka', kind: 'Gyűrű', category: '', stock: 1, price: 4000, image: '/assets/ring.png', teaser: 'Ellenállást ad a tűzsebzéssel szemben.', description: 'Rubinkővel díszített aranygyűrű, amely langyosnak érződik az ujjon.', effect: 'A viselőjének ellenállást ad a tűzsebzéssel szemben.' },
 ];
 
 export const storageKey = 'magic-shop-ledger-v1';
@@ -83,7 +85,7 @@ export function generateStock(catalog, existingItems, options, random = Math.ran
   const { prevalence = 'normal', size = 'medium', maxRarity = 'Ritka', category = 'all', count, consumables = false, includeExisting = true } = options;
   const maxIndex = rarities.indexOf(maxRarity);
   const existing = new Set(existingItems.map(item => item.catalogId ?? item.id));
-  const pool = catalog.filter(item => (includeExisting || !existing.has(item.id)) && (category === 'all' || item.category === category)
+  const pool = catalog.filter(item => (includeExisting || !existing.has(item.id)) && (category === 'all' || item.category === category || normalizedItemKind(item) === category)
     && rarities.indexOf(item.rarity) >= 0 && rarities.indexOf(item.rarity) <= maxIndex && item.rarity !== 'Artefaktum');
   const target = Math.min(pool.length, Math.max(0, Math.floor(count === '' || count == null || !Number.isFinite(Number(count))
     ? Math.round(sizeCounts[size] * prevalenceScale[prevalence]) : Number(count))));
@@ -91,7 +93,7 @@ export function generateStock(catalog, existingItems, options, random = Math.ran
   while (result.length < target && pool.length) {
     const weights = pool.map(item => {
       const rarityIndex = rarities.indexOf(item.rarity);
-      const isConsumable = ['Ital', 'Tekercs'].includes(item.category) || item.kind === 'Varázstekercs';
+      const isConsumable = ['Ital', 'Tekercs'].includes(item.category) || ['Ital', 'Tekercs', 'Varázstekercs'].includes(item.kind);
       return baseWeights[rarityIndex] * magicScale[prevalence][rarityIndex] * (consumables && isConsumable ? 2.5 : 1);
     });
     const total = weights.reduce((sum, weight) => sum + weight, 0);
@@ -101,7 +103,7 @@ export function generateStock(catalog, existingItems, options, random = Math.ran
     if (index < 0) index = pool.length - 1;
     const [item] = pool.splice(index, 1);
     const rarityIndex = rarities.indexOf(item.rarity);
-    const isConsumable = ['Ital', 'Tekercs'].includes(item.category) || item.kind === 'Varázstekercs';
+    const isConsumable = ['Ital', 'Tekercs'].includes(item.category) || ['Ital', 'Tekercs', 'Varázstekercs'].includes(item.kind);
     const maxStock = isConsumable ? Math.max(1, 4 - rarityIndex + (prevalence === 'abundant' ? 2 : 0)) : Math.max(1, 3 - rarityIndex);
     result.push(shopItemFromCatalog(item, 1 + Math.floor(random() * maxStock)));
   }

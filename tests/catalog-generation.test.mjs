@@ -45,3 +45,12 @@ test('random stock can replenish an existing catalog item without changing its d
   assert.equal(result[0].stock, 1);
   assert.equal(existing[0].stock, 3);
 });
+
+test('random stock can filter by a D&D item type even without a subtype', () => {
+  const catalog = [
+    { id: 'rod', name: 'Próba jogar', kind: 'Jogar', category: '', rarity: 'Nem gyakori', price: 400 },
+    { id: 'armor', name: 'Próba páncél', kind: 'Páncél', category: '', rarity: 'Nem gyakori', price: 400 },
+  ];
+  const result = generateStock(catalog, [], { category: 'Jogar', maxRarity: 'Nem gyakori', count: 2 }, () => 0);
+  assert.deepEqual(result.map(item => item.catalogId), ['rod']);
+});

@@ -43,6 +43,25 @@ final result: passed
 
 ---
 
+# Item Images and D&D 2024 Types QA · 2026-10-20
+
+## Evidence
+
+- Browser capture: `D:\Develop\magic-shop-prototype\implementation-item-images-tablet.png`, showing the catalog editor with all nine illustrated types, custom URL field, preview, and a visible sticky save action.
+- The warm parchment, oxblood, serif typography, and compact inventory behind the modal preserve the selected merchant-ledger direction.
+
+## Interaction and runtime checks
+
+- In an isolated local preview, selected Fegyver and Ritka; the proposed base price became 4000 gp. Changing to Ital proposed 2000 gp; selecting Artefaktum cleared the base price.
+- Saved a catalog item with a local HTTP image URL, added it to a shop, then changed its image to the bundled weapon illustration. The linked shop item displayed the updated image.
+- Created a shop item with the Jogar type and confirmed it entered the shared catalog with a 400 gp base price. Reloading preserved both new items.
+- Created an artifact with no base price. The inventory showed Felbecsülhetetlen and the sale action stayed disabled until an explicit sale price is entered.
+- The production build and all 12 Node tests passed. The Sites packaging script produced the required client, server, and hosting files.
+
+final result: passed
+
+---
+
 # Shared Catalog and Random Stock QA · 2026-10-20
 
 ## Evidence
