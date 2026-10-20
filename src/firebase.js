@@ -31,12 +31,12 @@ export function signOutUser() { return auth ? signOut(auth) : Promise.resolve();
 
 function ledgerRef(uid) { return doc(db, 'users', uid, 'ledgers', 'main'); }
 
-export async function loadCloudShops(uid) {
+export async function loadCloudLedger(uid) {
   const snapshot = await getDoc(ledgerRef(uid));
-  return snapshot.exists() && Array.isArray(snapshot.data()?.shops) ? snapshot.data().shops : null;
+  return snapshot.exists() && Array.isArray(snapshot.data()?.shops) ? snapshot.data() : null;
 }
 
-export function saveCloudShops(uid, shops) {
-  writeQueue = writeQueue.catch(() => {}).then(() => setDoc(ledgerRef(uid), { schemaVersion: 1, shops, updatedAt: Date.now() }));
+export function saveCloudLedger(uid, ledger) {
+  writeQueue = writeQueue.catch(() => {}).then(() => setDoc(ledgerRef(uid), { schemaVersion: 2, ...ledger, updatedAt: Date.now() }));
   return writeQueue;
 }

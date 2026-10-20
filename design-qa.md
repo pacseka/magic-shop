@@ -40,3 +40,40 @@ No actionable P0, P1, or P2 mismatch remains. The inventory, selected item, pric
 - P3: generated small item paintings have softer detail than the source concept at close zoom.
 
 final result: passed
+
+---
+
+# Shared Catalog and Random Stock QA · 2026-10-20
+
+## Evidence
+
+- Source visual truth: `C:\Users\Hacsi\.codex\generated_images\01a152ef-19e6-7281-81ad-005034ca2a31\exec-3f2e9c16-30dc-4293-9793-3ee0138a370f.png` (1048 × 1536 px).
+- Implementation, initial shop and selected cloak: `D:\Develop\magic-shop-prototype\implementation-catalog-tablet.png` (834 × 1194 px, 834 × 1194 CSS viewport, DPR 1).
+- New random-stock dialog: `D:\Develop\magic-shop-prototype\implementation-random-tablet.png` (834 × 1194 px, same viewport and density).
+- The source and current tablet screenshot were opened together for comparison. The source scales to 834 × 1222 px at equal width; its final 28 px extend beyond the implementation viewport. New shop controls, catalog actions, and the quick-sale strip intentionally occupy space absent from the source. Compare their visual language rather than treating their vertical offset as a fidelity error.
+- Focused region: the new random-stock dialog screenshot shows readable labels, form controls, preview rows, and a visible apply action at tablet size. No second crop was needed because the dialog and text were readable in the full viewport capture.
+
+## Findings
+
+No actionable P0, P1, or P2 visual issue remains. The original header art, paper texture, oxblood action color, item illustrations, inventory columns, and selected-item anatomy remain aligned with the chosen merchant-ledger direction. The new controls use the same type, borders, and button treatment.
+
+- Fonts and typography: Cormorant Garamond headings and Georgia body copy remain readable; catalog and random controls fit the tablet modal.
+- Spacing and layout: added shop and catalog controls move the details below the first viewport. A compact quick-sale strip immediately after the inventory keeps quantity, editable price, and sale available during live play.
+- Colors and tokens: parchment, brown text, subdued borders, and oxblood primary actions match the existing implementation. Rarity colors retain their previously corrected D&D labels.
+- Images and assets: the merchant art, item paintings, and parchment texture are unchanged. New icons use the existing Phosphor set.
+- Copy and content: Hungarian labels distinguish the shared catalog, shop stock, and randomized preview. Stock replenishment says it adds to existing quantities.
+
+## Comparison history
+
+1. Initial new-feature tablet capture placed the sale controls below the visible 834 × 1194 viewport (P2 for live-play use).
+2. Added the quick-sale strip after the inventory. In the new tablet capture, item selection, quantity, editable price, and sale are all visible above the fold.
+3. Initial random preview clipped the apply button at the bottom of the dialog (P2). Increased the wide dialog height and made its final actions sticky. The tablet preview now shows the full result and apply button.
+
+## Interaction and runtime checks
+
+- Created a catalog-only item, added it to one shop, created another shop, then added the same catalog item there with that shop's multiplier.
+- Rolled and applied random stock; existing item stock increased without duplicate rows. Reloading kept both the catalog and stock.
+- Edited the catalog item price and verified the linked shop price changed while stock stayed fixed. The editable sale field now resets to that new base-derived price.
+- Browser console errors: none. All 11 Node tests and the Vite build passed; Sites packaging produced the three required files.
+
+final result: passed

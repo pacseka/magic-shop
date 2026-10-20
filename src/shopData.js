@@ -9,12 +9,13 @@ export const initialItems = [
 export const storageKey = 'magic-shop-ledger-v1';
 export const activeShopKey = 'magic-shop-active-id-v1';
 const legacyKey = 'rezhold-shop-items-v3';
+export const rarities = ['Gyakori', 'Nem gyakori', 'Ritka', 'Nagyon ritka', 'Legendás', 'Artefaktum'];
 
 export const defaultShop = {
   id: 'rezhold', name: 'A Rézhold Kereskedés', location: 'Vízmély', owner: 'Mira Rézhold',
   description: 'Varázstárgyak és ritka úti felszerelések a kalandozóknak.',
   multiplier: 1, contact: '', faction: '', relationship: '', adventureHook: '',
-  items: initialItems,
+  items: initialItems.map(item => ({ ...item, catalogId: item.id })),
 };
 
 export const blankShop = () => ({
@@ -34,3 +35,75 @@ export function loadShops() {
 
 export const salePriceFor = (item, shop) => Math.round(Number(item?.price || 0) * Number(shop?.multiplier || 1));
 export const makeId = () => globalThis.crypto?.randomUUID?.() ?? `shop-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+
+export const itemDefinition = item => {
+  const { stock, catalogId, ...definition } = item;
+  return definition;
+};
+export const shopItemFromCatalog = (item, stock = 1) => ({ ...itemDefinition(item), catalogId: item.id, stock });
+
+// Older ledgers only held shop inventories. Preserve each shop's stock while
+// building one reusable definition for every distinct name and rarity.
+export function normalizeLedger(data) {
+  const shops = Array.isArray(data?.shops) && data.shops.length
+    ? data.shops : [{ ...defaultShop, items: defaultShop.items.map(item => ({ ...item })) }];
+  const catalog = Array.isArray(data?.catalog) ? data.catalog.map(itemDefinition) : [];
+  const byId = new Map(catalog.map(item => [item.id, item]));
+  const byName = new Map(catalog.map(item => [`${item.name?.trim().toLocaleLowerCase('hu-HU')}|${item.rarity}`, item.id]));
+  const nextShops = shops.map(shop => ({ ...shop, items: (shop.items ?? []).map(item => {
+    const key = `${item.name?.trim().toLocaleLowerCase('hu-HU')}|${item.rarity}`;
+    const catalogId = byId.has(item.catalogId) ? item.catalogId : byName.get(key) ?? item.catalogId ?? item.id ?? makeId();
+    if (!byId.has(catalogId)) {
+      const definition = { ...itemDefinition(item), id: catalogId };
+      catalog.push(definition);
+      byId.set(catalogId, definition);
+      byName.set(key, catalogId);
+    }
+    return { ...item, id: item.id ?? makeId(), catalogId };
+  }) }));
+  return { shops: nextShops, catalog };
+}
+
+export function loadLedger() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(storageKey));
+    if (Array.isArray(saved?.shops) && saved.shops.length) return normalizeLedger(saved);
+    const oldItems = JSON.parse(localStorage.getItem(legacyKey));
+    if (Array.isArray(oldItems) && oldItems.length) return normalizeLedger({ shops: [{ ...defaultShop, items: oldItems }] });
+  } catch { /* Keep sample data when local storage is damaged. */ }
+  return normalizeLedger(null);
+}
+
+const baseWeights = [64, 24, 9, 2.5, .5, 0];
+const magicScale = { scarce: [.95, .6, .25, .08, 0, 0], normal: [1, 1, 1, .5, .15, 0], abundant: [1, 1.25, 1.5, 1.3, .65, 0] };
+const sizeCounts = { small: 2, medium: 4, large: 7 };
+const prevalenceScale = { scarce: .65, normal: 1, abundant: 1.5 };
+
+export function generateStock(catalog, existingItems, options, random = Math.random) {
+  const { prevalence = 'normal', size = 'medium', maxRarity = 'Ritka', category = 'all', count, consumables = false, includeExisting = true } = options;
+  const maxIndex = rarities.indexOf(maxRarity);
+  const existing = new Set(existingItems.map(item => item.catalogId ?? item.id));
+  const pool = catalog.filter(item => (includeExisting || !existing.has(item.id)) && (category === 'all' || item.category === category)
+    && rarities.indexOf(item.rarity) >= 0 && rarities.indexOf(item.rarity) <= maxIndex && item.rarity !== 'Artefaktum');
+  const target = Math.min(pool.length, Math.max(0, Math.floor(count === '' || count == null || !Number.isFinite(Number(count))
+    ? Math.round(sizeCounts[size] * prevalenceScale[prevalence]) : Number(count))));
+  const result = [];
+  while (result.length < target && pool.length) {
+    const weights = pool.map(item => {
+      const rarityIndex = rarities.indexOf(item.rarity);
+      const isConsumable = ['Ital', 'Tekercs'].includes(item.category) || item.kind === 'Varázstekercs';
+      return baseWeights[rarityIndex] * magicScale[prevalence][rarityIndex] * (consumables && isConsumable ? 2.5 : 1);
+    });
+    const total = weights.reduce((sum, weight) => sum + weight, 0);
+    if (!total) break;
+    let roll = random() * total;
+    let index = weights.findIndex(weight => (roll -= weight) < 0);
+    if (index < 0) index = pool.length - 1;
+    const [item] = pool.splice(index, 1);
+    const rarityIndex = rarities.indexOf(item.rarity);
+    const isConsumable = ['Ital', 'Tekercs'].includes(item.category) || item.kind === 'Varázstekercs';
+    const maxStock = isConsumable ? Math.max(1, 4 - rarityIndex + (prevalence === 'abundant' ? 2 : 0)) : Math.max(1, 3 - rarityIndex);
+    result.push(shopItemFromCatalog(item, 1 + Math.floor(random() * maxStock)));
+  }
+  return result;
+}
