@@ -7,9 +7,11 @@ const config = {
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
 };
 
-export const firebaseReady = Object.values(config).every(Boolean);
+export const firebaseReady = Boolean(config.apiKey && config.authDomain && config.projectId && config.appId);
 const app = firebaseReady ? initializeApp(config) : null;
 const auth = app ? getAuth(app) : null;
 const db = app ? getFirestore(app) : null;

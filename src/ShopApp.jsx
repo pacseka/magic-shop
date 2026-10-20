@@ -5,6 +5,9 @@ import { firebaseReady, loadCloudShops, saveCloudShops, signIn, signOutUser, wat
 
 const money = value => new Intl.NumberFormat('hu-HU').format(value);
 const rarityClass = text => `rarity-${text.toLocaleLowerCase('hu-HU').replaceAll(' ', '-')}`;
+const cloudError = error => error?.code === 'permission-denied'
+  ? 'Firestore-hozzáférés elutasítva · ellenőrizd a Rules beállítást'
+  : `Felhőmentés sikertelen (${error?.code || 'ismeretlen hiba'}) · helyi mentés aktív`;
 
 export function App() {
   const [shops, setShops] = useState(loadShops);
@@ -65,8 +68,8 @@ export function App() {
           skipCloudSave.current = true;
         }
         if (!cancelled) { setCloudLoaded(true); setCloudStatus('Felhőbe mentve'); }
-      } catch {
-        if (!cancelled) setCloudStatus('A felhő nem érhető el · helyi mentés aktív');
+      } catch (error) {
+        if (!cancelled) setCloudStatus(cloudError(error));
       }
     });
     return () => { cancelled = true; unsubscribe(); };
@@ -79,7 +82,7 @@ export function App() {
     const timer = setTimeout(() => {
       saveCloudShops(user.uid, shops)
         .then(() => setCloudStatus('Felhőbe mentve'))
-        .catch(() => setCloudStatus('A felhő nem érhető el · helyi mentés aktív'));
+        .catch(error => setCloudStatus(cloudError(error)));
     }, 650);
     return () => clearTimeout(timer);
   }, [shops, user, cloudLoaded]);
@@ -149,7 +152,10 @@ export function App() {
     setToast('Az összes bolt JSON-fájlba exportálva');
   }
   async function connectCloud() {
-    try { await signIn(); } catch (error) { if (error?.code !== 'auth/popup-closed-by-user') setToast('Nem sikerült a bejelentkezés. Ellenőrizd a Firebase beállításait.'); }
+    try { await signIn(); } catch (error) {
+      if (error?.code === 'auth/popup-closed-by-user') return;
+      setToast(error?.code === 'auth/unauthorized-domain' ? 'A jelenlegi domain nincs engedélyezve a Firebase Authenticationben.' : `Google-bejelentkezés sikertelen (${error?.code || 'ismeretlen hiba'}).`);
+    }
   }
   async function resolveCloudConflict(choice) {
     if (!cloudConflict) return;
@@ -169,7 +175,7 @@ export function App() {
       setCloudLoaded(true);
       setCloudStatus('Helyi adatok felhőbe mentve');
       setCloudConflict(null);
-    } catch { setCloudStatus('A felhő nem érhető el · helyi mentés aktív'); }
+    } catch (error) { setCloudStatus(cloudError(error)); }
   }
 
   return <main className="ledger">

@@ -1,13 +1,16 @@
 # Firebase beállítása
 
-Az alkalmazás Firebase nélkül is működik, ekkor a boltok a böngésző helyi tárhelyén maradnak. A felhős mentéshez saját Firebase-projekt szükséges.
+Az alkalmazás a `magic-shops-of-hacsi` Firebase-projekthez van beállítva a helyi `.env.local` fájlban. A webes konfigurációt a felhasználó 2026. október 20-án adta meg. Firebase nélkül is működik: ekkor a boltok a böngésző helyi tárhelyén maradnak.
 
-1. A [Firebase Console-ban](https://console.firebase.google.com/) hozz létre egy új projektet a **Spark (ingyenes)** csomagban.
-2. Regisztrálj benne egy **Web appot**, és másold ki az alkalmazás konfigurációjából az `apiKey`, `authDomain`, `projectId` és `appId` értékeket.
-3. Az **Authentication → Sign-in method** oldalon kapcsold be a **Google** szolgáltatót. Az **Authorized domains** listához add hozzá azt a domaint, ahol az alkalmazást használod. A helyi fejlesztéshez a `localhost` is szükséges.
-4. Hozz létre egy **Cloud Firestore** adatbázist. A **Rules** fülön a `firestore.rules` fájl tartalmát állítsd be és publikáld. A szabály minden bejelentkezett felhasználónak csak a saját boltadatait engedi olvasni és módosítani.
-5. Másold a `.env.example` fájlt `.env.local` néven, és töltsd ki a négy `VITE_FIREBASE_*` értéket. Ezután indítsd újra a helyi szervert.
+## A konzolban ellenőrizendő
+
+1. Az **Authentication → Sign-in method** oldalon a **Google** szolgáltató legyen engedélyezve. Az **Authorized domains** listában szerepeljen a `localhost`, valamint a későbbi éles domain.
+2. Létezzen **Cloud Firestore** adatbázis. A **Rules** fülön a [firestore.rules](firestore.rules) fájl tartalmát kell publikálni. Ez minden bejelentkezett felhasználónak csak a saját boltadatait engedi olvasni és módosítani.
+
+A nyilvános Firebase API ellenőrzésekor a projekt válaszolt, a `localhost` engedélyezett domain volt, és a Google-szolgáltató bejelentkezési URL-t adott. A Firestore egy névtelen próbaolvasást elutasított. Ezek az ellenőrzések nem igazolják, hogy a bejelentkezett felhasználó írhatja a saját bolti adatát; ehhez az alkalmazásbeli első bejelentkezés és mentés szükséges.
+
+Másik gépen a `.env.example` fájlból készíthető `.env.local`, és abba kell beírni a webes konfiguráció hat értékét. A Vite fejlesztői szervert a környezeti fájl változtatása után újra kell indítani.
 
 Az első bejelentkezéskor a meglévő helyi boltok felkerülnek a felhőbe. Ha a fiókban már van eltérő bolti adat, az alkalmazás választást kér a helyi és a felhős változat között. A módosítások helyben azonnal, a felhőbe rövid késleltetéssel mentődnek. A JSON export az összes boltot és azok készletét tartalmazza.
 
-Az `.env.local` fájl ne kerüljön forráskezelésbe. A Firebase webes konfiguráció önmagában nem titkos hozzáférési kulcs; az adatok védelmét a bejelentkezés és a Firestore-szabályok adják. A felhős működés éles ellenőrzéséhez a projekt létrehozása és a fenti beállítások szükségesek.
+Az `.env.local` fájl nem kerül forráskezelésbe. A Firebase webes konfiguráció önmagában nem titkos hozzáférési kulcs; az adatok védelmét a bejelentkezés és a Firestore-szabályok adják. A felhős működés éles ellenőrzéséhez egyszer be kell jelentkezni Google-fiókkal az alkalmazásban.
