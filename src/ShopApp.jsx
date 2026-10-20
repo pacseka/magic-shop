@@ -4,7 +4,7 @@ import { activeShopKey, blankShop, generateStock, loadLedger, makeId, normalizeL
 import { firebaseReady, loadCloudLedger, saveCloudLedger, signIn, signOutUser, watchUser } from './firebase.js';
 import { ItemImage, ItemImagePicker } from './ItemImagePicker.jsx';
 import { ItemJsonImport } from './ItemJsonImport.jsx';
-import { defaultImageFor, isDefaultImage, itemTypes, normalizedItemKind, suggestedBasePrice } from './itemTypes.js';
+import { defaultImageFor, isDefaultImage, itemTypes, normalizedItemKind, publicAssetUrl, suggestedBasePrice } from './itemTypes.js';
 import { previewItemImport } from './itemImport.js';
 
 const money = value => new Intl.NumberFormat('hu-HU').format(value);
@@ -266,7 +266,7 @@ export function App() {
   }
 
   return <main className="ledger">
-    <header className="shop-header"><img className="header-art" src="/assets/header-merchant.png" alt="" /><div className="header-content"><h1>{shop?.name}</h1><p>{shop?.location || 'Ismeretlen hely'} <span aria-hidden="true">·</span> {shop?.owner || 'Ismeretlen tulajdonos'}</p><div className="header-rule" aria-hidden="true"><span /></div></div></header>
+    <header className="shop-header"><img className="header-art" src={publicAssetUrl('/assets/header-merchant.png')} alt="" /><div className="header-content"><h1>{shop?.name}</h1><p>{shop?.location || 'Ismeretlen hely'} <span aria-hidden="true">·</span> {shop?.owner || 'Ismeretlen tulajdonos'}</p><div className="header-rule" aria-hidden="true"><span /></div></div></header>
     <section className="shop-bar" aria-label="Boltkezelés"><label className="shop-picker"><Storefront size={22} aria-hidden="true" /><span>Bolt</span><select aria-label="Aktív bolt" value={shop?.id ?? ''} onChange={event => { setActiveId(event.target.value); setSelectedId(''); setSearch(''); }}>{shops.map(entry => <option key={entry.id} value={entry.id}>{entry.name}</option>)}</select></label><button className="shop-icon-button" onClick={() => openShopDialog(shop)} aria-label="Bolt szerkesztése" title="Bolt szerkesztése"><PencilSimple size={20} /></button><button className="button button-secondary" onClick={() => openShopDialog(null)}><Plus size={19} /> Új bolt</button><button className="button button-secondary export-button" onClick={exportJson}><DownloadSimple size={19} /> JSON export</button></section>
     <section className="shop-notes" aria-label="Bolti tudnivalók"><div><strong>{shop?.description || 'Még nincs leírás ehhez a bolthoz.'}</strong><span>{[shop?.contact && `Kapcsolat: ${shop.contact}`, shop?.faction && `Frakció: ${shop.faction}`, shop?.relationship && `Viszony: ${shop.relationship}`, shop?.adventureHook && `Kalandötlet: ${shop.adventureHook}`].filter(Boolean).join(' · ')}</span></div><span className="multiplier-badge">Árszorzó ×{String(shop?.multiplier ?? 1).replace('.', ',')}</span></section>
     <section className="cloud-bar" aria-label="Felhőszinkron"><Cloud size={20} aria-hidden="true" /><span>{firebaseReady ? user ? `${user.displayName || user.email} · ${cloudStatus}` : 'Helyi mentés · jelentkezz be a felhőhöz' : 'Helyi mentés · Firebase-projekt még nincs beállítva'}</span>{firebaseReady && (user ? <button onClick={signOutUser}><SignOut size={17} /> Kijelentkezés</button> : <button onClick={connectCloud}>Bejelentkezés Google-fiókkal</button>)}</section>
