@@ -31,8 +31,8 @@ function ShopPriceEditor({ item, shop, value, onChange, onSave, onReset }) {
   </form>;
 }
 
-export function App() {
-  const [ledger, setLedger] = useState(loadLedger);
+export function App({ seedItems = [] }) {
+  const [ledger, setLedger] = useState(() => loadLedger(seedItems));
   const { shops, catalog } = ledger;
   const [activeId, setActiveId] = useState(() => localStorage.getItem(activeShopKey) || 'rezhold');
   const [selectedId, setSelectedId] = useState('cloak');

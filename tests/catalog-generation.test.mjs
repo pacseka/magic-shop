@@ -22,6 +22,34 @@ test('local ledger loads catalog-only items for reuse', () => {
   finally { delete globalThis.localStorage; }
 });
 
+test('a fresh production ledger starts without example items', () => {
+  globalThis.localStorage = { getItem: () => null };
+  try {
+    const ledger = loadLedger();
+    assert.equal(ledger.shops.length, 1);
+    assert.deepEqual(ledger.shops[0].items, []);
+    assert.deepEqual(ledger.catalog, []);
+  } finally { delete globalThis.localStorage; }
+});
+
+test('development examples seed only a fresh ledger, while saved items take precedence', () => {
+  const seed = [{ id: 'dev-example', name: 'Fejlesztői minta', rarity: 'Gyakori', stock: 3, price: 50 }];
+  const saved = new Map();
+  globalThis.localStorage = { getItem: key => saved.get(key) ?? null };
+  try {
+    const fresh = loadLedger(seed);
+    assert.equal(fresh.shops[0].items[0].stock, 3);
+    assert.equal(fresh.catalog[0].name, 'Fejlesztői minta');
+    assert.equal(fresh.catalog[0].stock, undefined);
+
+    saved.set(storageKey, JSON.stringify({ shops: [{ id: 'my-shop', items: [] }], catalog: [] }));
+    const existing = loadLedger(seed);
+    assert.equal(existing.shops[0].id, 'my-shop');
+    assert.deepEqual(existing.shops[0].items, []);
+    assert.deepEqual(existing.catalog, []);
+  } finally { delete globalThis.localStorage; }
+});
+
 test('random stock respects rarity, category, existing items, and quantity limits', () => {
   const catalog = [
     { id: 'a', name: 'A', rarity: 'Gyakori', category: 'Ital', price: 50 },

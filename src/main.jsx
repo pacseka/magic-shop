@@ -6,8 +6,15 @@ import "./shop-extra.css";
 import "./magic-item-editor.css";
 import "./shop-editor.css";
 
-createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-);
+async function start() {
+  const seedItems = import.meta.env.DEV
+    ? (await import('./devSampleData.js')).initialItems
+    : [];
+  createRoot(document.getElementById("root")).render(
+    <React.StrictMode>
+      <App seedItems={seedItems} />
+    </React.StrictMode>,
+  );
+}
+
+start();
