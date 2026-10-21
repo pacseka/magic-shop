@@ -59,8 +59,24 @@ export function recordRandomStock(shop, rolled, { id = makeId(), at = new Date()
   return { ...shop, items, activity: [...(shop.activity ?? []), { id, at, type: 'random', changes }] };
 }
 
+export function recordItemRemoval(shop, itemId, { id = makeId(), at = new Date().toISOString() } = {}) {
+  const index = shop.items.findIndex(item => item.id === itemId);
+  if (index < 0) return null;
+  const item = shop.items[index];
+  const change = { itemId, itemName: item.name, before: item.stock, after: 0, removedItem: { ...item }, index };
+  return {
+    ...shop,
+    items: shop.items.filter(entry => entry.id !== itemId),
+    activity: [...(shop.activity ?? []), { id, at, type: 'removal', changes: [change] }],
+  };
+}
+
 export function canUndoLatestActivity(shop) {
   const latest = (shop?.activity ?? []).findLast(event => !event.undoneAt);
+  if (latest?.type === 'removal') {
+    return Boolean(latest.changes?.length && latest.changes.every(change => change.removedItem
+      && !shop.items.some(item => item.id === change.itemId || (change.removedItem.catalogId && item.catalogId === change.removedItem.catalogId))));
+  }
   return Boolean(latest?.changes?.length && latest.changes.every(change => shop.items.find(item => item.id === change.itemId)?.stock === change.after));
 }
 
@@ -72,6 +88,9 @@ export function undoLatestActivity(shop, at = new Date().toISOString()) {
     const change = changes.get(item.id);
     return change?.created ? [] : [{ ...item, ...(change ? { stock: change.before } : {}) }];
   });
+  if (latest.type === 'removal') {
+    for (const change of latest.changes) items.splice(change.index, 0, { ...change.removedItem });
+  }
   return { ...shop, items, activity: shop.activity.map(event => event.id === latest.id ? { ...event, undoneAt: at } : event) };
 }
 

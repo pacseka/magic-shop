@@ -4,12 +4,14 @@ const signed = value => `${value > 0 ? '+' : ''}${value}`;
 function activityTitle(event) {
   if (event.type === 'random') return `Véletlen készlet · ${event.changes.length} tárgy`;
   const change = event.changes[0];
+  if (event.type === 'removal') return `Eltávolítás a boltból · ${change.itemName}`;
   return `${event.type === 'sale' ? 'Eladás' : 'Készletkorrekció'} · ${change.itemName}`;
 }
 
 function activityDetail(event) {
   if (event.type === 'random') return event.changes.map(change => `${change.itemName} ${signed(change.after - change.before)} db`).join(' · ');
   const change = event.changes[0];
+  if (event.type === 'removal') return `${change.before} db kivéve a kínálatból · a közös tárgylistában megmaradt`;
   const quantity = `${signed(change.after - change.before)} db`;
   if (event.type === 'sale') return `${quantity} · ${money(event.unitPrice)} gp/db · összesen ${money(event.totalPrice)} gp`;
   return `${quantity}${event.reason ? ` · ${event.reason}` : ''}`;

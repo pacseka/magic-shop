@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { canUndoLatestActivity, itemDefinition, loadShops, normalizeLedger, recordRandomStock, recordStockChange, salePriceFor, shopItemFromCatalog, storageKey, undoLatestActivity } from '../src/shopData.js';
+import { canUndoLatestActivity, itemDefinition, loadShops, normalizeLedger, recordItemRemoval, recordRandomStock, recordStockChange, salePriceFor, shopItemFromCatalog, storageKey, undoLatestActivity } from '../src/shopData.js';
 
 test('migrates the previous single-shop inventory without losing stock', () => {
   const saved = new Map([['rezhold-shop-items-v3', JSON.stringify([{ id: 'custom', name: 'Próbatárgy', stock: 3, price: 80 }])]]);
@@ -73,4 +73,43 @@ test('keeps saved activity when normalizing a ledger', () => {
   const event = { id: 'sale-1', type: 'sale', changes: [{ itemId: 'potion', before: 2, after: 1 }] };
   const ledger = normalizeLedger({ shops: [{ id: 'shop', items: [{ id: 'potion', name: 'Gyógyital', stock: 1 }], activity: [event] }] });
   assert.deepEqual(ledger.shops[0].activity, [event]);
+});
+
+test('removes a shop item without changing the catalog or other shops, and restores its price, stock and position after reload', () => {
+  const definition = { id: 'ring', name: 'Gyűrű', rarity: 'Ritka', price: 400 };
+  const item = { ...shopItemFromCatalog(definition, 3), shopPrice: 620 };
+  const shop = { id: 'first', multiplier: 1.25, items: [{ id: 'wand', name: 'Pálca', stock: 1 }, item], activity: [] };
+  const second = { id: 'second', items: [shopItemFromCatalog(definition, 9)] };
+  const removed = recordItemRemoval(shop, item.id, { id: 'remove-1' });
+  assert.deepEqual(removed.items, [shop.items[0]]);
+  assert.deepEqual(shop.items[1], item);
+  assert.equal(removed.activity[0].type, 'removal');
+  const ledger = normalizeLedger(JSON.parse(JSON.stringify({ catalog: [definition], shops: [removed, second] })));
+  assert.deepEqual(ledger.catalog.find(entry => entry.id === definition.id), definition);
+  assert.equal(ledger.shops[1].items[0].stock, 9);
+  assert.equal(canUndoLatestActivity(ledger.shops[0]), true);
+  const restored = undoLatestActivity(ledger.shops[0]);
+  assert.deepEqual(restored.items[1], item);
+  assert.equal(restored.multiplier, 1.25);
+  assert.ok(restored.activity[0].undoneAt);
+});
+
+test('removes the last out-of-stock item and can undo without losing earlier activity', () => {
+  const item = { id: 'ring', name: 'Gyűrű', stock: 1 };
+  const sold = recordStockChange({ items: [item], activity: [] }, { type: 'sale', itemId: item.id, delta: -1, unitPrice: 80 });
+  const removed = recordItemRemoval(sold, item.id);
+  assert.deepEqual(removed.items, []);
+  assert.equal(removed.activity.length, 2);
+  const restored = undoLatestActivity(removed);
+  assert.equal(restored.items[0].stock, 0);
+  assert.equal(undoLatestActivity(restored).items[0].stock, 1);
+  assert.equal(recordItemRemoval(removed, 'missing'), null);
+});
+
+test('does not undo a removal over a re-added item from the same catalog', () => {
+  const item = { id: 'old', catalogId: 'ring', name: 'Gyűrű', stock: 2 };
+  const removed = recordItemRemoval({ items: [item], activity: [] }, item.id);
+  const restocked = { ...removed, items: [{ ...item, id: 'new', stock: 4 }] };
+  assert.equal(canUndoLatestActivity(restocked), false);
+  assert.equal(undoLatestActivity(restocked), null);
 });
