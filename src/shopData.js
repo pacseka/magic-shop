@@ -35,11 +35,13 @@ export function loadShops() {
   return [{ ...defaultShop, items: initialItems.map(item => ({ ...item })) }];
 }
 
-export const salePriceFor = (item, shop) => Math.round(Number(item?.price || 0) * Number(shop?.multiplier || 1));
+export const salePriceFor = (item, shop) => item?.shopPrice != null
+  ? Number(item.shopPrice)
+  : Math.round(Number(item?.price || 0) * Number(shop?.multiplier || 1));
 export const makeId = () => globalThis.crypto?.randomUUID?.() ?? `shop-${Date.now()}-${Math.random().toString(36).slice(2)}`;
 
 export const itemDefinition = item => {
-  const { stock, catalogId, ...definition } = item;
+  const { stock, catalogId, shopPrice, ...definition } = item;
   return definition;
 };
 export const shopItemFromCatalog = (item, stock = 1) => ({ ...itemDefinition(item), catalogId: item.id, stock });

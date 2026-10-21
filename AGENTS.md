@@ -4,6 +4,9 @@ Run the local server yourself and open the preview in the browser available to t
 
 The user chose the first generated visual direction, a warm parchment merchant ledger, for a D&D 5.5 magic-shop app used primarily on a tablet. Preserve that visual direction and prioritize quick inventory selection, editable sale price, and stock changes during live play.
 
+Keep the selected item's sale bar visible at the bottom on every screen size. Clicking its name should reveal the item's description and effect. A price edited from a shop belongs to that shop's item only; preserve the shop multiplier and the shared catalog base price.
+Edit the persistent shop price on the shop item's detail card with an explicit save action. A price entered during a sale applies only to that sale and must never change the item's shop price.
+
 The user wants multiple named shops with location, owner, description, a multiplier applied to each item's base price, and useful relationship/adventure notes. Shop and item data should persist with Firebase when configured, remain usable locally before setup or during an outage, and be exportable as JSON.
 
 The user wants a shared magic-item catalog: items can be created centrally and added to any shop, and every item created in a shop must also enter the shared catalog. Shops should support random inventory generation based on local magic prevalence and practical shop factors such as size, rarity limit, and specialty, with a preview before applying it. Keep each shop's stock independent.
