@@ -41,6 +41,7 @@ No actionable P0, P1, or P2 mismatch remains. The inventory, selected item, pric
 
 final result: passed
 
+
 ---
 
 # Item Images and D&D 2024 Types QA · 2026-10-20
@@ -94,5 +95,51 @@ No actionable P0, P1, or P2 visual issue remains. The original header art, paper
 - Rolled and applied random stock; existing item stock increased without duplicate rows. Reloading kept both the catalog and stock.
 - Edited the catalog item price and verified the linked shop price changed while stock stayed fixed. The editable sale field now resets to that new base-derived price.
 - Browser console errors: none. All 11 Node tests and the Vite build passed; Sites packaging produced the three required files.
+
+final result: passed
+
+---
+
+# Magic-item editor QA · 2026-10-21
+
+## Evidence
+
+- Selected editor direction: `C:\Users\Hacsi\.codex\generated_images\01a15d21-96ec-7701-8901-521c6024305a\exec-9b75afe5-ddf4-4cbc-a3ec-3d021d5716b2.png`.
+- Browser capture: `C:\Users\Hacsi\.codex\visualizations\2026\10\21\01a15d21-96ec-7701-8901-521c6024305a\magic-item-editor-implemented.png`.
+- Checked at `http://127.0.0.1:4173/`.
+
+## Comparison
+
+The editor follows the selected parchment layout: burgundy heading, item art beside core fields, grouped descriptions below, collapsed custom-image field, and actions anchored at the bottom. Image choices open in their own view. The browser shows existing catalog text and the shop behind the editor, so the content and surrounding background differ from the concept. Stock appears when adding directly to a shop; catalog definition editing omits stock because each shop owns its stock.
+
+## Interaction and runtime checks
+
+- Catalog edit opens with current name, type, rarity, price, image, and descriptions. The image choices open and return to the item fields.
+- Shop creation opens with price and stock visible; save is disabled until a name is entered.
+- Changing rarity updates the suggested base price; artifacts clear it; choosing a potion suggests half the common base price.
+- `npm run build` and `npm run test:sites` pass (4 tests).
+
+final result: passed
+
+---
+
+# Shop editor UX QA · 2026-10-21
+
+## Evidence
+
+- Before: the narrow Új bolt dialog had an internal scrollbar and its save action sat below the visible area.
+- After, basic fields: `C:\Users\Hacsi\.codex\visualizations\2026\10\21\01a15d21-96ec-7701-8901-521c6024305a\shop-editor-basics.png`.
+- After, optional notes: `C:\Users\Hacsi\.codex\visualizations\2026\10\21\01a15d21-96ec-7701-8901-521c6024305a\shop-editor-notes.png`.
+
+## Findings
+
+The parchment, oxblood, serif type, input borders, and button styles remain consistent with the existing app. The wide editor shows essential shop fields first and keeps the create/save action visible. Contact, faction, relationship, and adventure notes occupy a second section with the same footer. Both sections fit in the checked browser viewport without scrolling the dialog.
+
+## Interaction and runtime checks
+
+- The create action stays disabled until the shop has a name and positive multiplier.
+- A draft shop name and contact survived switching between sections; the trial draft was discarded without creating a shop.
+- Existing shop editing opened with its saved basic data and exposed the optional notes section.
+- `npm run build` and `npm run test:sites` pass (4 tests).
 
 final result: passed

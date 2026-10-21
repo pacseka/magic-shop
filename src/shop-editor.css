@@ -1,0 +1,26 @@
+.shop-editor-dialog{width:min(100%,850px);height:min(760px,calc(100dvh - 24px));max-height:none;overflow:hidden;padding:0;background:#f3ead9 url('/assets/parchment.png') center/900px 900px}
+.dialog .shop-editor{display:flex;flex-direction:column;gap:0;height:100%;min-height:0}
+.shop-editor-header{display:flex;align-items:start;justify-content:space-between;gap:16px;flex:none;padding:24px 30px 18px;border-bottom:1px solid #b8a88d}
+.shop-editor-header h2{margin:0 0 3px;color:#681f1a;font:700 clamp(36px,4.5vw,51px)/1 'Cormorant Garamond',Georgia,serif}
+.shop-editor-header p{margin:0;color:#665a4b;font-size:17px}
+.shop-editor-header>button{display:grid;place-items:center;flex:none;width:38px;height:38px;border:0;background:transparent;color:#681f1a}
+.shop-editor-nav{display:flex;gap:8px;flex:none;padding:16px 30px 0;border-bottom:1px solid #b8a88d}
+.shop-editor-nav button{display:flex;align-items:center;gap:9px;min-height:48px;margin-bottom:-1px;padding:0 17px;border:1px solid transparent;border-bottom:2px solid transparent;background:transparent;color:#705a46;cursor:pointer;font-size:17px;font-weight:700}
+.shop-editor-nav button.is-active{border-color:#b8a88d;border-bottom-color:#f3ead9;border-radius:5px 5px 0 0;background:#f8f0df;color:#681f1a}
+.shop-editor-nav button span{font-size:13px;font-weight:700;opacity:.7}
+.shop-editor-nav button small{font-size:12px;font-weight:400}
+.shop-editor-body{flex:1;min-height:0;overflow:auto;padding:24px 30px}
+.shop-editor-section{display:grid;align-content:start;gap:19px}
+.dialog .shop-editor-section label{display:grid;gap:6px;color:#35291f;font-size:17px;font-weight:700}
+.dialog .shop-editor input,.dialog .shop-editor textarea{width:100%;min-width:0;padding:10px 12px;border:1px solid #a9937f;border-radius:4px;background:#fff9ee;color:#292018;font-size:18px}
+.dialog .shop-editor input{height:48px}
+.dialog .shop-editor textarea{min-height:76px;resize:vertical;line-height:1.35}
+.shop-editor-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px}
+.shop-editor-hint{color:#665746;font-size:13px;font-weight:400;line-height:1.3}
+.shop-editor-intro{margin:0 0 2px;color:#665746;font-size:15px;line-height:1.4}
+.shop-editor-footer{display:flex;align-items:center;justify-content:space-between;gap:16px;flex:none;margin:0 30px;padding:17px 0 20px;border-top:1px solid #b8a88d}
+.shop-editor-footer>span{max-width:350px;color:#665746;font-size:13px;line-height:1.35}
+.shop-editor-footer>div{display:flex;gap:10px}
+.shop-editor-footer .button{min-height:46px;font-size:16px}
+@media(max-width:760px){.shop-editor-dialog{height:calc(100dvh - 16px)}.shop-editor-header{padding:19px 20px 14px}.shop-editor-nav{padding:12px 20px 0}.shop-editor-body{padding:20px}.shop-editor-footer{margin:0 20px;padding:14px 0}.shop-editor-footer>span{max-width:220px}.shop-editor-section{gap:15px}}
+@media(max-width:560px){.dialog-backdrop:has(.shop-editor-dialog){padding:0}.shop-editor-dialog{width:100%;height:100dvh;border-radius:0}.shop-editor-header{padding:16px 16px 12px}.shop-editor-header h2{font-size:35px}.shop-editor-header p{font-size:14px}.shop-editor-nav{gap:3px;padding:10px 12px 0}.shop-editor-nav button{flex:1;justify-content:center;gap:5px;min-height:44px;padding:0 6px;font-size:14px}.shop-editor-nav button small{display:none}.shop-editor-body{padding:18px 16px}.shop-editor-section{gap:14px}.shop-editor-pair{grid-template-columns:1fr;gap:14px}.dialog .shop-editor input,.dialog .shop-editor textarea{font-size:16px}.shop-editor-footer{display:grid;gap:10px;margin:0 16px;padding:12px 0 calc(12px + env(safe-area-inset-bottom))}.shop-editor-footer>span{max-width:none}.shop-editor-footer>div{display:flex}.shop-editor-footer .button{flex:1;font-size:14px}}

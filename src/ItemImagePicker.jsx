@@ -17,8 +17,6 @@ export function ItemImagePicker({ item, onChange }) {
     <div className="item-image-choices" aria-label="Alapképek">
       {itemTypes.map(type => <button key={type.name} type="button" className={`item-image-choice ${preview === publicAssetUrl(type.image) && !customUrl ? 'is-active' : ''}`} aria-pressed={preview === publicAssetUrl(type.image) && !customUrl} onClick={() => onChange(type.image)}><img src={publicAssetUrl(type.image)} alt="" /><span>{type.name}</span></button>)}
     </div>
-    <label className="item-image-url">Saját kép URL-je<input type="url" inputMode="url" pattern="https?://.+" placeholder="https://példa.hu/varazstargy.png" value={customUrl} onChange={event => onChange(event.target.value)} /></label>
-    <p className="field-hint">Az alapképek az alkalmazás részei. Saját képnél csak a hivatkozást mentjük.</p>
     <div className="item-image-preview"><span>Előnézet</span><ItemImage item={item} alt="Kiválasztott tárgykép előnézete" /><small>{customUrl ? 'Saját URL' : 'Alapkép'}</small></div>
   </fieldset>;
 }

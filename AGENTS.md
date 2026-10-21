@@ -1,8 +1,14 @@
-# Prototype Instructions
+# Hacsi's magic shops Instructions
+
+The project's display name is **Hacsi's magic shops**. Use `hacsi-magic-shops` where a package-safe identifier is required.
 
 Run the local server yourself and open the preview in the browser available to this environment. Do not give the user server-start instructions when you can run it.
 
 The user chose the first generated visual direction, a warm parchment merchant ledger, for a D&D 5.5 magic-shop app used primarily on a tablet. Preserve that visual direction and prioritize quick inventory selection, editable sale price, and stock changes during live play.
+
+For magic-item creation and editing, the user chose the first full-page parchment editor concept: show the item image beside compact core fields, keep description fields together, put image choices behind “Kép cseréje,” and keep save actions visible without scrolling the entire dialog.
+
+Keep new-shop and shop-editing forms short at tablet size. Put essential shop fields on an immediately visible first section, optional relationship and adventure notes on a second section, and keep save actions visible while switching sections.
 
 Keep the selected item's sale bar visible at the bottom on every screen size. Clicking its name should reveal the item's description and effect. A price edited from a shop belongs to that shop's item only; preserve the shop multiplier and the shared catalog base price.
 Edit the persistent shop price on the shop item's detail card with an explicit save action. A price entered during a sale applies only to that sale and must never change the item's shop price.
@@ -17,8 +23,8 @@ The shared magic-item catalog should accept machine-readable JSON import from a 
 
 The user wants this repository published at its GitHub Pages project URL through GitHub Actions, without a custom domain. Keep the existing local and Sites builds working alongside the Pages build.
 
-Before making substantial visual changes, use the Product Design plugin's `get-context` skill when the visual source is unclear or no longer matches the current goal. When the user gives durable prototype-specific design feedback, preferences, or decisions, record them in `AGENTS.md`.
+Before making substantial visual changes, use the Product Design plugin's `get-context` skill when the visual source is unclear or no longer matches the current goal. When the user gives durable project-specific design feedback, preferences, or decisions, record them in `AGENTS.md`.
 
 When implementing from a selected generated mock, treat that image as the source of truth for layout, component anatomy, density, spacing, color, typography, visible content, and hierarchy.
 
-Build app UI in `src/`. Keep `.openai/hosting.json`, `worker/index.js`, `scripts/prepare-sites-build.mjs`, and `tests/sites-worker.test.mjs` intact so the same local prototype can be handed to Sites. Before a Sites handoff, run `npm run build` and `npm run test:sites`; the build must leave `dist/client/index.html`, `dist/server/index.js`, and `dist/.openai/hosting.json`.
+Build app UI in `src/`. Keep `.openai/hosting.json`, `worker/index.js`, `scripts/prepare-sites-build.mjs`, and `tests/sites-worker.test.mjs` intact so the same local app can be handed to Sites. Before a Sites handoff, run `npm run build` and `npm run test:sites`; the build must leave `dist/client/index.html`, `dist/server/index.js`, and `dist/.openai/hosting.json`.

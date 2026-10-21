@@ -1,0 +1,41 @@
+.magic-editor-dialog{width:min(100%,990px);height:min(940px,calc(100dvh - 24px));max-height:none;overflow:hidden;padding:0;background:#f3ead9 url('/assets/parchment.png') center/900px 900px}
+.dialog .magic-editor{display:flex;flex-direction:column;gap:0;height:100%;min-height:0}
+.magic-editor-header{display:flex;align-items:start;justify-content:space-between;gap:16px;flex:none;padding:24px 30px 14px;border-bottom:1px solid #b8a88d}
+.magic-editor-header h2{margin:0 0 3px;color:#681f1a;font:700 clamp(34px,4.5vw,51px)/1 'Cormorant Garamond',Georgia,serif}
+.magic-editor-header p{margin:0;color:#665a4b;font-size:18px}
+.magic-editor-header>button{display:grid;place-items:center;flex:none;width:38px;height:38px;border:0;background:transparent;color:#681f1a}
+.magic-editor-body{display:grid;align-content:start;gap:16px;flex:1;min-height:0;overflow:auto;padding:18px 30px 22px}
+.magic-editor-top{display:grid;grid-template-columns:minmax(180px,27%) minmax(0,1fr);gap:25px;align-items:start}
+.magic-editor-visual{display:grid;gap:8px}
+.magic-editor-image{height:248px;display:grid;place-items:center;overflow:hidden;border:1px solid #ab9173;border-radius:3px;background:#e9ddc8}
+.magic-editor-image img{width:100%;height:100%;object-fit:contain;mix-blend-mode:multiply}
+.magic-editor-image-button{display:flex;align-items:center;justify-content:center;gap:9px;min-height:45px;border:1px solid #a58d70;border-radius:4px;background:#f7efde;color:#681f1a;font-size:17px;font-weight:700}
+.magic-editor-fields{display:grid;gap:12px;min-width:0}
+.dialog .magic-editor-fields label,.dialog .magic-editor-descriptions label,.dialog .magic-editor-url label{display:grid;gap:5px;color:#35291f;font-size:16px;font-weight:700}
+.magic-editor input,.magic-editor select,.magic-editor textarea{width:100%;min-width:0;padding:9px 11px;border:1px solid #a9937f;border-radius:4px;background:#fff9ee;color:#292018;font-size:18px}
+.magic-editor input,.magic-editor select{height:45px}
+.magic-editor textarea{resize:vertical;line-height:1.3}
+.magic-editor-pair,.magic-editor-price-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.magic-editor-price-row.has-stock{grid-template-columns:repeat(3,minmax(0,1fr))}
+.magic-editor-price-hint{margin-top:-6px;color:#665746;font-size:13px;line-height:1.25}
+.magic-editor-url{border:1px solid #bba789;border-radius:4px;background:#f5ead6}
+.magic-editor-url summary{padding:11px 16px;color:#4d2b21;font-size:16px;font-weight:700;cursor:pointer}
+.magic-editor-url label{padding:0 15px 14px;font-size:14px}
+.magic-editor-descriptions{display:grid;gap:11px}
+.magic-editor-descriptions textarea{min-height:0}
+.magic-editor-descriptions label:first-child textarea{height:56px}
+.magic-editor-descriptions label:nth-child(2) textarea,.magic-editor-descriptions label:nth-child(3) textarea{height:83px}
+.magic-editor-footer{flex:none;padding:0 30px 16px;background:#f3ead9 url('/assets/parchment.png') center/900px 900px}
+.magic-editor-rule{display:block;height:1px;margin:0 0 13px;background:#b8a88d}
+.magic-editor-footer>div{display:flex;justify-content:flex-end;gap:10px}
+.magic-editor-footer .button{min-width:122px;min-height:44px;font-size:17px}
+.magic-editor-image-view{display:block}
+.magic-editor-back{display:inline-flex;align-items:center;gap:7px;margin:0 0 10px;padding:6px 0;border:0;background:transparent;color:#681f1a;font-weight:700}
+.magic-editor-image-view>p{margin:0 0 14px;color:#58493a;font-size:15px}
+.magic-editor-image-view .item-image-picker{background:#f8f0df}
+.magic-editor-image-view .item-image-choices{grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
+.magic-editor-image-view .item-image-choice{grid-template-rows:100px auto;font-size:14px}
+.magic-editor-image-view .item-image-choice img{height:100px}
+.magic-editor-image-view .item-image-preview img{width:74px;height:74px}
+@media(max-width:760px){.magic-editor-dialog{height:calc(100dvh - 16px)}.magic-editor-header{padding:18px 20px 12px}.magic-editor-body{gap:13px;padding:15px 20px}.magic-editor-top{grid-template-columns:minmax(145px,28%) minmax(0,1fr);gap:16px}.magic-editor-image{height:215px}.magic-editor-pair,.magic-editor-price-row.has-stock{gap:8px}.magic-editor-price-row.has-stock{grid-template-columns:repeat(2,minmax(0,1fr))}.magic-editor-price-row.has-stock label:last-child{grid-column:1/-1}.magic-editor-footer{padding:0 20px 12px}}
+@media(max-width:560px){.dialog-backdrop:has(.magic-editor-dialog){padding:0}.magic-editor-dialog{width:100%;height:100dvh;border-radius:0}.magic-editor-header{padding:15px 16px 10px}.magic-editor-header h2{font-size:33px}.magic-editor-header p{font-size:14px}.magic-editor-body{padding:14px 16px}.magic-editor-top{grid-template-columns:1fr}.magic-editor-visual{display:flex;align-items:center}.magic-editor-image{width:108px;height:108px;flex:none}.magic-editor-image-button{flex:1}.magic-editor-fields{gap:10px}.magic-editor-price-row.has-stock{grid-template-columns:repeat(2,minmax(0,1fr))}.magic-editor-price-row.has-stock label:last-child{grid-column:1/-1}.magic-editor input,.magic-editor select,.magic-editor textarea{font-size:16px}.magic-editor-descriptions label:first-child textarea{height:55px}.magic-editor-descriptions label:nth-child(2) textarea,.magic-editor-descriptions label:nth-child(3) textarea{height:76px}.magic-editor-footer{padding:0 16px calc(12px + env(safe-area-inset-bottom))}.magic-editor-footer .button{min-width:0;flex:1;font-size:15px}.magic-editor-image-view .item-image-choices{grid-template-columns:repeat(3,minmax(0,1fr))}.magic-editor-image-view .item-image-choice{grid-template-rows:68px auto}.magic-editor-image-view .item-image-choice img{height:68px}}
