@@ -1,16 +1,12 @@
 # Firebase beállítása
 
-Az alkalmazás a `magic-shops-of-hacsi` Firebase-projekthez van beállítva a helyi `.env.local` fájlban. A webes konfigurációt a felhasználó 2026. október 20-án adta meg. Firebase nélkül is működik: ekkor a boltok a böngésző helyi tárhelyén maradnak.
+A Firebase opcionális. Konfiguráció nélkül az alkalmazás a böngésző helyi tárhelyén működik. Saját Firebase-projektet használj; a repository nem tartalmaz beépített projektazonosítót vagy hitelesítő adatot.
 
-## A konzolban ellenőrizendő
+1. A [Firebase Console](https://console.firebase.google.com/) felületén hozz létre egy projektet, majd regisztrálj egy webalkalmazást. A kapott konfigurációs objektum mezőit másold át az `.env.example` alapján készített `.env.local` fájlba. A négy szükséges mező: `apiKey`, `authDomain`, `projectId`, `appId`; a `storageBucket` és a `messagingSenderId` opcionális. A pontos változónevek a [README-ben](README.md#firebase-szinkronizálás-opcionális) találhatók.
+2. Az **Authentication → Sign-in method** részen engedélyezd a Google-bejelentkezést. Az **Authentication → Settings → Authorized domains** listához add hozzá az alkalmazás tényleges domainjét, helyi futtatáskor szükség esetén a `localhost` címet. Új Firebase-projekteknél a `localhost` már nem feltétlenül szerepel alapból a listában.
+3. Hozz létre Cloud Firestore adatbázist. A **Rules** lapon a [firestore.rules](firestore.rules) teljes tartalmát publikáld. A szabály a `users/{uid}/ledgers/{ledgerId}` útvonalon kizárólag az adott bejelentkezett felhasználó számára enged olvasást és írást; minden más útvonalat elutasít.
+4. Indítsd újra a fejlesztői szervert az `.env.local` módosítása után. Jelentkezz be az alkalmazás **Kezelés → Felhőszinkron** részében, majd ellenőrizd, hogy a mentés és egy másik böngészőben való betöltés működik-e.
 
-1. Az **Authentication → Sign-in method** oldalon a **Google** szolgáltató legyen engedélyezve. Az **Authorized domains** listában szerepeljen a `localhost`, valamint a későbbi éles domain.
-2. Létezzen **Cloud Firestore** adatbázis. A **Rules** fülön a [firestore.rules](firestore.rules) fájl tartalmát kell publikálni. Ez minden bejelentkezett felhasználónak csak a saját boltadatait engedi olvasni és módosítani.
+Az első bejelentkezéskor a meglévő helyi adatok felkerülhetnek a felhőbe. Ha a két változat eltér, az alkalmazás választást kér. A választás előtt érdemes JSON exportot készíteni. A módosítások helyben azonnal, a felhőbe rövid késleltetéssel mentődnek.
 
-A nyilvános Firebase API ellenőrzésekor a projekt válaszolt, a `localhost` engedélyezett domain volt, és a Google-szolgáltató bejelentkezési URL-t adott. A Firestore egy névtelen próbaolvasást elutasított. Ezek az ellenőrzések nem igazolják, hogy a bejelentkezett felhasználó írhatja a saját bolti adatát; ehhez az alkalmazásbeli első bejelentkezés és mentés szükséges.
-
-Másik gépen a `.env.example` fájlból készíthető `.env.local`, és abba kell beírni a webes konfiguráció hat értékét. A Vite fejlesztői szervert a környezeti fájl változtatása után újra kell indítani.
-
-Az első bejelentkezéskor a meglévő helyi boltok felkerülnek a felhőbe. Ha a fiókban már van eltérő bolti adat, az alkalmazás választást kér a helyi és a felhős változat között. A módosítások helyben azonnal, a felhőbe rövid késleltetéssel mentődnek. A JSON export az összes boltot és azok készletét tartalmazza.
-
-Az `.env.local` fájl nem kerül forráskezelésbe. A Firebase webes konfiguráció önmagában nem titkos hozzáférési kulcs; az adatok védelmét a bejelentkezés és a Firestore-szabályok adják. A felhős működés éles ellenőrzéséhez egyszer be kell jelentkezni Google-fiókkal az alkalmazásban.
+Az `.env.local` fájl Gitből kizárt. A Firebase webes konfiguráció a kliensalkalmazásban látható; nem helyettesíti a Firestore-szabályokat. Ne írj `VITE_` változóba szolgáltatásfiók-kulcsot vagy más titkot. A Firebase [webes beállítási](https://firebase.google.com/docs/web/setup), [Google-bejelentkezési](https://firebase.google.com/docs/auth/web/google-signin), [engedélyezett domainekről szóló](https://firebase.google.com/docs/auth/faq-and-troubleshooting) és [Firestore-szabályokról szóló](https://firebase.google.com/docs/firestore/security/get-started) dokumentációja további részleteket ad.

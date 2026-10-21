@@ -5,6 +5,7 @@ The project's display name is **Hacsi's magic shops**. Use `hacsi-magic-shops` w
 Run the local server yourself and open the preview in the browser available to this environment. Do not give the user server-start instructions when you can run it.
 
 The user chose the first generated visual direction, a warm parchment merchant ledger, for a D&D 5.5 magic-shop app used primarily on a tablet. Preserve that visual direction and prioritize quick inventory selection, editable sale price, and stock changes during live play.
+For live play, the user selected the third tablet design for a right-side parchment “Kezelés” drawer. Keep shop, shared catalog, JSON, cloud, random stock, and activity management in that drawer so search and inventory start higher on the game screen. Preserve the fixed sale bar and its quick stock and price controls.
 
 For magic-item creation and editing, the user chose the first full-page parchment editor concept: show the item image beside compact core fields, keep description fields together, put image choices behind “Kép cseréje,” and keep save actions visible without scrolling the entire dialog.
 

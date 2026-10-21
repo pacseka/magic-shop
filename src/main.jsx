@@ -5,6 +5,7 @@ import "./styles.css";
 import "./shop-extra.css";
 import "./magic-item-editor.css";
 import "./shop-editor.css";
+import "./management-drawer.css";
 
 async function start() {
   const seedItems = import.meta.env.DEV

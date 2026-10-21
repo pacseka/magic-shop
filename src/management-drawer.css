@@ -1,0 +1,44 @@
+.management-layer{position:fixed;inset:0 0 86px;z-index:18;background:#211811a8}
+.management-layer.no-sale-bar{bottom:0}
+.management-drawer{position:absolute;top:0;right:0;bottom:0;width:min(56vw,610px);overflow-y:auto;overscroll-behavior:contain;border-left:1px solid #9f7b58;background:#f3ead9 url('/assets/parchment.png') center/900px 900px;box-shadow:-16px 0 36px #21181152;color:#39261e}
+.management-header{position:relative;min-height:207px;padding:25px 32px 12px;overflow:hidden}
+.management-header>img{position:absolute;top:0;right:0;width:70%;height:100%;object-fit:cover;object-position:right center;opacity:.8;mix-blend-mode:multiply;mask-image:linear-gradient(90deg,transparent,#000 42%)}
+.management-header h2,.management-header p,.management-rule{position:relative;z-index:1}
+.management-header h2{margin:0;color:#681f1a;font:700 58px/1 'Cormorant Garamond',Georgia,serif}
+.management-header p{margin:3px 0 18px;color:#544235;font-size:17px}
+.management-rule{display:block;width:48%;border-top:1px solid #ac9a80}
+.management-rule:after{position:absolute;top:-5px;left:52%;width:8px;height:8px;transform:rotate(45deg);border:1px solid #8e785f;background:#f3ead9;content:''}
+.management-close{position:absolute;top:19px;right:21px;z-index:2;width:43px;height:43px;border:0;background:#f3ead9bb;color:#681f1a;display:grid;place-items:center;cursor:pointer}
+.management-content{display:grid;gap:20px;padding:0 27px 24px}
+.management-group{padding-top:10px}
+.management-group+.management-group{border-top:1px solid #b7a68f;padding-top:30px}
+.management-group-heading{display:flex;align-items:flex-start;gap:12px;margin:0 0 11px;color:#681f1a}
+.management-group-heading>svg{flex:none;margin-top:3px}
+.management-group-heading h3{margin:0;color:#681f1a;font:700 27px/1.1 'Cormorant Garamond',Georgia,serif}
+.management-group-heading p{margin:2px 0 0;color:#695344;font-size:14px}
+.management-action{display:flex;align-items:center;gap:16px;width:100%;min-height:69px;margin:0 0 6px;padding:11px 15px;border:1px solid #bda98d;border-radius:5px;background:#fff9ee77;color:#681f1a;text-align:left;cursor:pointer}
+.management-action:hover{background:#fff9eedc}
+.management-action>svg:first-child{flex:none}
+.management-action-copy{display:grid;gap:2px;min-width:0;flex:1}
+.management-action-copy strong{color:#30231c;font-size:18px;line-height:1.13}
+.management-action-copy small{color:#68574a;font-size:13px;line-height:1.2}
+.management-chevron{flex:none}
+.management-action-trailing{max-width:115px;color:#5d5748;font-size:12px;text-align:right}
+.management-cloud-status:before{display:inline-block;width:7px;height:7px;margin-right:5px;border-radius:50%;background:#629c65;content:''}
+.management-cloud-details{margin:-1px 0 8px;padding:11px 15px 13px;border:1px solid #bda98d;border-top:0;border-radius:0 0 5px 5px;background:#fff9ee77;font-size:14px}
+.management-cloud-details p{margin:0 0 8px;line-height:1.35}
+.management-cloud-details button{min-height:40px;padding:0 12px;border:1px solid #9c826b;border-radius:4px;background:#f3ead9;color:#681f1a;font-weight:700}
+.management-shop-notes{margin:7px 0 2px;color:#5c4a3d;font-size:13px;line-height:1.35}
+.management-shop-notes summary{min-height:34px;color:#681f1a;font-weight:700;cursor:pointer}
+.management-shop-notes p{margin:0 0 6px}
+.management-drawer button:focus-visible,.management-toggle:focus-visible{outline:3px solid #a06937;outline-offset:2px}
+.management-toggle{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 13px;border:1px solid #8e4c3c;border-radius:5px;background:#f8eedc;color:#681f1a;font-size:16px;font-weight:700;white-space:nowrap}
+.game-ledger .shop-bar{padding:11px 0 9px}
+.game-ledger .shop-notes{padding:7px 1px 3px}
+.game-ledger .shop-notes div>span{display:none}
+.game-ledger .toolbar{padding:9px 0 15px}
+.game-ledger .toolbar .add-button{min-width:160px}
+.add-label-short{display:none}
+@media(max-width:900px){.game-ledger .shop-header{height:128px}.game-ledger .header-content{padding:19px 30px}.game-ledger .header-content p{font-size:18px;margin-bottom:11px}.game-ledger .header-rule{width:37%}.game-ledger .shop-notes{font-size:13px}.game-ledger .toolbar .restock-button{display:none}}
+@media(max-width:760px){.management-drawer{width:min(84vw,560px)}.game-ledger .shop-header{height:116px}.game-ledger .header-content{padding:18px 21px}.game-ledger .shop-bar{flex-wrap:nowrap}.game-ledger .shop-picker{flex-basis:auto}.game-ledger .toolbar{flex-wrap:nowrap}.game-ledger .search-field{flex:1 1 auto;height:54px}.game-ledger .toolbar .add-button{flex:none;min-width:110px;min-height:54px;padding:0 10px}.game-ledger .shop-notes{white-space:nowrap;overflow:hidden}.game-ledger .shop-notes strong{overflow:hidden;text-overflow:ellipsis}}
+@media(max-width:560px){.management-layer{bottom:155px}.management-drawer{width:100%}.management-header{min-height:145px;padding:20px 22px 8px}.management-header h2{font-size:48px}.management-header p{font-size:15px}.management-content{padding:0 17px 22px}.management-group-heading h3{font-size:24px}.management-action{min-height:62px;gap:11px;padding:8px 10px}.management-action-copy strong{font-size:16px}.management-action-copy small{font-size:12px}.management-action-trailing{max-width:80px;font-size:11px}.game-ledger .shop-header{height:105px}.game-ledger .header-content h1{font-size:31px}.game-ledger .header-content p{font-size:15px}.game-ledger .shop-bar{gap:6px}.game-ledger .shop-picker>span{display:none}.game-ledger .shop-picker select{font-size:14px}.management-toggle{padding:0 8px;font-size:14px}.game-ledger .shop-notes{display:none}.game-ledger .toolbar{gap:6px}.game-ledger .toolbar .add-button{min-width:88px;font-size:13px}.game-ledger .toolbar .add-button svg{width:17px}.add-label-long{display:none}.add-label-short{display:inline}}
