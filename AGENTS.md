@@ -12,6 +12,7 @@ Keep new-shop and shop-editing forms short at tablet size. Put essential shop fi
 
 Keep the selected item's sale bar visible at the bottom on every screen size. Clicking its name should reveal the item's description and effect. A price edited from a shop belongs to that shop's item only; preserve the shop multiplier and the shared catalog base price.
 Edit the persistent shop price on the shop item's detail card with an explicit save action. A price entered during a sale applies only to that sale and must never change the item's shop price.
+Keep a per-shop record of sales and stock changes. Let the user undo the latest recorded stock action, and make manual stock additions and reductions quick from the selected item's sale bar.
 
 The user wants multiple named shops with location, owner, description, a multiplier applied to each item's base price, and useful relationship/adventure notes. Shop and item data should persist with Firebase when configured, remain usable locally before setup or during an outage, and be exportable as JSON.
 

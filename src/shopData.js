@@ -17,7 +17,7 @@ export const defaultShop = {
   id: 'rezhold', name: 'A Rézhold Kereskedés', location: 'Vízmély', owner: 'Mira Rézhold',
   description: 'Varázstárgyak és ritka úti felszerelések a kalandozóknak.',
   multiplier: 1, contact: '', faction: '', relationship: '', adventureHook: '',
-  items: initialItems.map(item => ({ ...item, catalogId: item.id })),
+  items: initialItems.map(item => ({ ...item, catalogId: item.id })), activity: [],
 };
 
 export const blankShop = () => ({
@@ -40,6 +40,49 @@ export const salePriceFor = (item, shop) => item?.shopPrice != null
   : Math.round(Number(item?.price || 0) * Number(shop?.multiplier || 1));
 export const makeId = () => globalThis.crypto?.randomUUID?.() ?? `shop-${Date.now()}-${Math.random().toString(36).slice(2)}`;
 
+export function recordStockChange(shop, { id = makeId(), at = new Date().toISOString(), type, itemId, delta, unitPrice, reason = '' }) {
+  const item = shop.items.find(entry => entry.id === itemId);
+  if (!item || !['sale', 'adjustment'].includes(type) || !Number.isInteger(delta) || delta === 0 || (type === 'sale' && delta > 0)) return null;
+  const after = item.stock + delta;
+  if (after < 0 || (type === 'sale' && (!Number.isFinite(unitPrice) || unitPrice < 0))) return null;
+  const change = { itemId, itemName: item.name, before: item.stock, after };
+  const activity = { id, at, type, changes: [change], ...(type === 'sale' ? { unitPrice, totalPrice: -delta * unitPrice } : { reason: reason.trim() }) };
+  return { ...shop, items: shop.items.map(entry => entry.id === itemId ? { ...entry, stock: after } : entry), activity: [...(shop.activity ?? []), activity] };
+}
+
+export function recordRandomStock(shop, rolled, { id = makeId(), at = new Date().toISOString() } = {}) {
+  if (!rolled.length) return null;
+  const items = shop.items.map(item => ({ ...item }));
+  const changes = [];
+  for (const item of rolled) {
+    const existing = items.find(entry => entry.catalogId === item.catalogId);
+    if (existing) {
+      changes.push({ itemId: existing.id, itemName: existing.name, before: existing.stock, after: existing.stock + item.stock });
+      existing.stock += item.stock;
+    } else {
+      items.push({ ...item });
+      changes.push({ itemId: item.id, itemName: item.name, before: 0, after: item.stock, created: true });
+    }
+  }
+  return { ...shop, items, activity: [...(shop.activity ?? []), { id, at, type: 'random', changes }] };
+}
+
+export function canUndoLatestActivity(shop) {
+  const latest = (shop?.activity ?? []).findLast(event => !event.undoneAt);
+  return Boolean(latest?.changes?.length && latest.changes.every(change => shop.items.find(item => item.id === change.itemId)?.stock === change.after));
+}
+
+export function undoLatestActivity(shop, at = new Date().toISOString()) {
+  if (!canUndoLatestActivity(shop)) return null;
+  const latest = shop.activity.findLast(event => !event.undoneAt);
+  const changes = new Map(latest.changes.map(change => [change.itemId, change]));
+  const items = shop.items.flatMap(item => {
+    const change = changes.get(item.id);
+    return change?.created ? [] : [{ ...item, ...(change ? { stock: change.before } : {}) }];
+  });
+  return { ...shop, items, activity: shop.activity.map(event => event.id === latest.id ? { ...event, undoneAt: at } : event) };
+}
+
 export const itemDefinition = item => {
   const { stock, catalogId, shopPrice, ...definition } = item;
   return definition;
@@ -54,7 +97,7 @@ export function normalizeLedger(data) {
   const catalog = Array.isArray(data?.catalog) ? data.catalog.map(itemDefinition) : [];
   const byId = new Map(catalog.map(item => [item.id, item]));
   const byName = new Map(catalog.map(item => [`${item.name?.trim().toLocaleLowerCase('hu-HU')}|${item.rarity}`, item.id]));
-  const nextShops = shops.map(shop => ({ ...shop, items: (shop.items ?? []).map(item => {
+  const nextShops = shops.map(shop => ({ ...shop, activity: Array.isArray(shop.activity) ? shop.activity : [], items: (shop.items ?? []).map(item => {
     const key = `${item.name?.trim().toLocaleLowerCase('hu-HU')}|${item.rarity}`;
     const catalogId = byId.has(item.catalogId) ? item.catalogId : byName.get(key) ?? item.catalogId ?? item.id ?? makeId();
     if (!byId.has(catalogId)) {
