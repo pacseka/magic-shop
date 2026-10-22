@@ -28,6 +28,20 @@
 .management-cloud-details{margin:-1px 0 8px;padding:11px 15px 13px;border:1px solid #bda98d;border-top:0;border-radius:0 0 5px 5px;background:#fff9ee77;font-size:14px}
 .management-cloud-details p{margin:0 0 8px;line-height:1.35}
 .management-cloud-details button{min-height:40px;padding:0 12px;border:1px solid #9c826b;border-radius:4px;background:#f3ead9;color:#681f1a;font-weight:700}
+.management-action:disabled,.management-cloud-details button:disabled{opacity:.55;cursor:default}
+.management-cloud-status.is-pending:before{background:#b17a2a}
+.cloud-copy-actions{display:grid;gap:8px;margin:14px 0}
+.cloud-copy-actions button{display:flex;align-items:center;gap:9px;padding:10px 12px;text-align:left;line-height:1.35}
+.cloud-copy-actions button svg{flex:none}
+.cloud-copy-actions small{color:#68574a;line-height:1.4}
+.cloud-account-actions,.cloud-copy-confirm>div{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.cloud-copy-confirm{padding:12px;margin:12px 0;border:1px solid #ac7541;border-radius:4px;background:#fbefd4}
+.cloud-copy-confirm>strong{display:block;margin-bottom:7px;color:#681f1a}
+.cloud-restore{display:block;width:100%;margin:8px 0;padding:8px 12px!important;text-align:left}
+.ledger-workspace{min-width:0;margin:0;padding:0;border:0}
+.data-source-status{display:flex;align-items:center;flex-wrap:wrap;gap:4px 12px;padding:4px 1px;color:#68574a;font-size:12px;overflow-wrap:anywhere}
+.data-source-status strong{font-weight:600}
+.data-source-status button{min-height:36px;border:1px solid #9c826b;border-radius:4px;background:#f3ead9;color:#681f1a}
 .management-shop-notes{margin:7px 0 2px;color:#5c4a3d;font-size:13px;line-height:1.35}
 .management-shop-notes summary{min-height:34px;color:#681f1a;font-weight:700;cursor:pointer}
 .management-shop-notes p{margin:0 0 6px}

@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
-import { doc, getDoc, getFirestore, setDoc } from 'firebase/firestore';
+import { doc, getDocFromServer, getFirestore, setDoc } from 'firebase/firestore';
 
 const config = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -32,7 +32,7 @@ export function signOutUser() { return auth ? signOut(auth) : Promise.resolve();
 function ledgerRef(uid) { return doc(db, 'users', uid, 'ledgers', 'main'); }
 
 export async function loadCloudLedger(uid) {
-  const snapshot = await getDoc(ledgerRef(uid));
+  const snapshot = await getDocFromServer(ledgerRef(uid));
   return snapshot.exists() && Array.isArray(snapshot.data()?.shops) ? snapshot.data() : null;
 }
 
