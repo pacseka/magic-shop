@@ -122,11 +122,11 @@ export function normalizeLedger(data) {
   return { shops: nextShops, catalog };
 }
 
-export function loadLedger(seedItems = []) {
+export function loadLedger(seedItems = [], storage = localStorage) {
   try {
-    const saved = JSON.parse(localStorage.getItem(storageKey));
+    const saved = JSON.parse(storage.getItem(storageKey));
     if (Array.isArray(saved?.shops) && saved.shops.length) return normalizeLedger(saved);
-    const oldItems = JSON.parse(localStorage.getItem(legacyKey));
+    const oldItems = JSON.parse(storage.getItem(legacyKey));
     if (Array.isArray(oldItems) && oldItems.length) return normalizeLedger({ shops: [{ ...defaultShop, items: oldItems }] });
   } catch { /* Fall back to a fresh starter shop when local data is damaged. */ }
   return normalizeLedger({ shops: [{ ...defaultShop, items: seedItems.map(item => ({ ...item, catalogId: item.id })) }] });
