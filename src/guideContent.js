@@ -18,6 +18,12 @@ export const guideSections = [
         title: 'Honnan lesznek tárgyak?',
         text: 'A saját tárgylistába kézzel hozhatsz létre tárgyat, JSON-ből importálhatsz, vagy bejelentkezés után másolhatsz az SRD alaplistából. Ezután választhatod ki, melyik bolt készletébe kerüljenek.',
       },
+      {
+        title: 'Telepítés telefonra vagy tabletre',
+        text: 'Nyisd meg az alkalmazás HTTPS-címét a készülék böngészőjében. Az első betöltés után a felület és ez az útmutató kapcsolat nélkül is megnyitható. A felhős szinkronizáláshoz továbbra is internet kell; a helyi és a fiókhoz tartozó offline adatok külön maradnak.',
+        steps: ['Androidon Chrome-ban nyisd meg a böngésző menüjét, majd válaszd az Alkalmazás telepítése vagy Hozzáadás a kezdőképernyőhöz lehetőséget.', 'iPhone-on és iPaden Safariban nyisd meg a Megosztás menüt, majd válaszd a Hozzáadás a Főképernyőhöz lehetőséget.'],
+        note: 'iPhone-on és iPaden a telepített példány helyi tárhelye eltérhet a Safariban tárolt adatokétól. Meglévő helyi készletet a Kezelés → Helyi és felhőadatok ablakban, kifejezett feltöltéssel vihetsz át a felhőbe; a művelet a felhős céladatokat lecseréli.',
+      },
     ],
   },
   {

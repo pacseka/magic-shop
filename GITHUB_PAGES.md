@@ -12,6 +12,12 @@ Más repository név esetén a `package.json` `build:pages` parancsában a `--ba
 2. A repository alapértelmezett ágán az **Actions → Deploy GitHub Pages → Run workflow** paranccsal indítsd a `.github/workflows/deploy-pages.yml` workflow-t. A jelenlegi workflow csak kézzel indítható; a feltöltés nem indít telepítést.
 3. A sikeres futás után a fenti címen érhető el az alkalmazás. A workflow a `dist/client` statikus fájljait publikálja.
 
+## Telepítés telefonra vagy tabletre
+
+A Pages HTTPS-címén megnyitott alkalmazás böngészőből telepíthető. Androidon Chrome-ban a menü **Alkalmazás telepítése** vagy **Hozzáadás a kezdőképernyőhöz** pontját használd. iPhone-on és iPaden Safariban a **Megosztás → Hozzáadás a Főképernyőhöz** útvonalat válaszd. Az első online betöltés után a felület és a beépített útmutató offline is elindul. A felhős adatok szinkronizálásához hálózat kell; az app a meglévő fiókonkénti offline másolatot használja.
+
+iPhone-on és iPaden a telepített alkalmazás helyi tárhelye elkülönülhet a Safari helyi adataitól. Meglévő helyi boltokat a Safari-beli alkalmazás **Kezelés → Helyi és felhőadatok** műveletével lehet kifejezetten a felhőbe feltölteni, majd a telepített alkalmazásban ugyanabba a fiókba bejelentkezni. A feltöltés a teljes felhős céladatkészletet lecseréli, ezért a megerősítést ellenőrizni kell.
+
 ## Firebase szinkronizálás
 
 A felhős bejelentkezéshez a repository **Settings → Secrets and variables → Actions → Variables** részén add meg az `.env.example` fájlban szereplő `VITE_FIREBASE_*` értékeket. A négy kötelező változó: `VITE_FIREBASE_API_KEY`, `VITE_FIREBASE_AUTH_DOMAIN`, `VITE_FIREBASE_PROJECT_ID`, `VITE_FIREBASE_APP_ID`. A `VITE_FIREBASE_STORAGE_BUCKET` és `VITE_FIREBASE_MESSAGING_SENDER_ID` opcionális.

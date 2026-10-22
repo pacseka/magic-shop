@@ -7,6 +7,7 @@ Az útmutató elsődleges helye az alkalmazás **Kezelés → Útmutató** felü
 - **Bolt létrehozása:** név, hely, tulajdonos, árszorzó és rövid leírás megadása; a kapcsolatok és kalandjegyzetek opcionálisak.
 - **Bolt kiválasztása és szerkesztése:** váltás a boltok között, az adatok és a jegyzetek későbbi módosítása.
 - **Mit jelent az üres kezdőállapot?** Új telepítéskor a saját tárgylista és a bolti készlet üres; tárgyat saját kezűleg, JSON-ből vagy bejelentkezés után az SRD alaplistából lehet átvenni.
+- **Telepítés telefonra vagy tabletre:** HTTPS-címről Androidon Chrome menü, iPhone-on és iPaden Safari Megosztás → Hozzáadás a Főképernyőhöz; az első online betöltés után az app és az útmutató offline megnyitható.
 
 ## 2. Tárgyak előkészítése
 

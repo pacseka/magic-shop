@@ -2,6 +2,8 @@
 
 The project's display name is **Hacsi's magic shops**. Use `hacsi-magic-shops` where a package-safe identifier is required.
 
+Keep the app installable from mobile and tablet browsers as a PWA on its hosted HTTPS URLs. Preserve offline access to the app shell and bundled guide without caching or mixing local and cloud ledger data in the service worker.
+
 Run the local server yourself and open the preview in the browser available to this environment. Do not give the user server-start instructions when you can run it.
 
 The user chose the first generated visual direction, a warm parchment merchant ledger, for a D&D 5.5 magic-shop app used primarily on a tablet. Preserve that visual direction and prioritize quick inventory selection, editable sale price, and stock changes during live play.

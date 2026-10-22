@@ -20,3 +20,11 @@ async function start() {
 }
 
 start();
+
+if (import.meta.env.PROD && "serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register(`${import.meta.env.BASE_URL}sw.js`).catch(() => {
+      // The app remains usable when service workers are unavailable.
+    });
+  });
+}
