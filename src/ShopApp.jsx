@@ -11,6 +11,7 @@ import { defaultImageFor, itemTypes, normalizedItemKind, publicAssetUrl } from '
 import { previewItemImport } from './itemImport.js';
 import { ActivityJournal } from './InventoryActivity.jsx';
 import { ManagementDrawer } from './ManagementDrawer.jsx';
+import { CloudDataDialog } from './CloudDataDialog.jsx';
 
 const money = value => new Intl.NumberFormat('hu-HU').format(value);
 const rarityClass = text => `rarity-${text.toLocaleLowerCase('hu-HU').replaceAll(' ', '-')}`;
@@ -49,6 +50,8 @@ export function App({ seedItems = [] }) {
   const removalTriggerRef = useRef(null);
   const [managementOpen, setManagementOpen] = useState(false);
   const managementButtonRef = useRef(null);
+  const dialogReturnFocusRef = useRef(null);
+  const previousDialogRef = useRef(null);
   const [toast, setToast] = useState('');
   const [draft, setDraft] = useState(blankShop);
   const [editingId, setEditingId] = useState(null);
@@ -83,7 +86,7 @@ export function App({ seedItems = [] }) {
     const frame = requestAnimationFrame(() => {
       if (dialog === 'remove') { document.querySelector('.remove-item-cancel')?.focus(); return; }
       if (dialog === 'delete-shop') { document.querySelector('.delete-shop-cancel')?.focus(); return; }
-      if (document.activeElement === document.body || document.activeElement === managementButtonRef.current) {
+      if (!document.querySelector('.dialog')?.contains(document.activeElement)) {
         document.querySelector('.dialog [autofocus], .dialog-heading button, .dialog button')?.focus();
       }
     });
@@ -91,7 +94,21 @@ export function App({ seedItems = [] }) {
   }, [dialog]);
 
   useEffect(() => {
-    setDialog(null);
+    if (previousDialogRef.current && !dialog && managementOpen) {
+      const frame = requestAnimationFrame(() => {
+        const trigger = dialogReturnFocusRef.current;
+        if (trigger?.isConnected && !trigger.disabled) trigger.focus();
+        else document.querySelector('.management-close')?.focus();
+        dialogReturnFocusRef.current = null;
+      });
+      previousDialogRef.current = dialog;
+      return () => cancelAnimationFrame(frame);
+    }
+    previousDialogRef.current = dialog;
+  }, [dialog, managementOpen]);
+
+  useEffect(() => {
+    setDialog(current => current === 'cloud' ? current : null);
     setSelectedId('');
     setSearch('');
     setToast('');
@@ -241,13 +258,12 @@ export function App({ seedItems = [] }) {
     setToast({ message: `${removalItem.name} eltávolítva a boltból`, undoId: activityId });
     requestAnimationFrame(() => (document.querySelector('.quick-sale-name') ?? document.querySelector('.add-button'))?.focus());
   }
-  function handleRemovalKeys(event) {
-    if (!['remove', 'delete-shop'].includes(dialog)) return;
-    if (event.key === 'Escape') { event.preventDefault(); closeDialog(); }
+  function handleDialogKeys(event) {
+    if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); closeDialog(); }
     if (event.key === 'Tab') {
-      const buttons = [...event.currentTarget.querySelectorAll('button:not(:disabled)')];
-      const first = buttons[0];
-      const last = buttons.at(-1);
+      const focusable = [...event.currentTarget.querySelectorAll('.dialog button:not(:disabled), .dialog input:not(:disabled), .dialog select:not(:disabled), .dialog textarea:not(:disabled), .dialog a[href], .dialog [tabindex]:not([tabindex="-1"])')].filter(element => element.getClientRects().length);
+      const first = focusable[0];
+      const last = focusable.at(-1);
       if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
       else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
     }
@@ -265,7 +281,6 @@ export function App({ seedItems = [] }) {
   function cancelShopDeletion() {
     setDialog(null);
     setShopRemovalId(null);
-    requestAnimationFrame(() => managementButtonRef.current?.focus());
   }
   function closeDialog() {
     if (dialog === 'remove') cancelRemoval();
@@ -291,7 +306,7 @@ export function App({ seedItems = [] }) {
     setRandomPreview(null);
     setDialog(null);
     setToast(`${removalShop.name} törölve. A közös tárgykatalógus megmaradt.`);
-    requestAnimationFrame(() => (document.querySelector('.empty-shop-create') ?? managementButtonRef.current)?.focus());
+    if (!managementOpen) requestAnimationFrame(() => (document.querySelector('.empty-shop-create') ?? managementButtonRef.current)?.focus());
   }
   function saveShop(event) {
     event.preventDefault();
@@ -353,7 +368,7 @@ export function App({ seedItems = [] }) {
   }
 
   function openManagementAction(action) {
-    setManagementOpen(false);
+    dialogReturnFocusRef.current = document.activeElement;
     if (action === 'edit-shop') openShopDialog(shop);
     else if (action === 'new-shop') openShopDialog(null);
     else if (action === 'delete-shop' && shop) { setShopRemovalId(shop.id); setDialog('delete-shop'); }
@@ -361,7 +376,8 @@ export function App({ seedItems = [] }) {
     else if (action === 'random') openRandomDialog();
     else if (action === 'activity') setDialog('activity');
     else if (action === 'import') setDialog('import');
-    else if (action === 'export') { exportJson(); requestAnimationFrame(() => managementButtonRef.current?.focus()); }
+    else if (action === 'cloud') setDialog('cloud');
+    else if (action === 'export') exportJson();
   }
 
   return <main className="ledger game-ledger">
@@ -377,9 +393,10 @@ export function App({ seedItems = [] }) {
     {selected && <section className="quick-sale" aria-label="Gyors eladás" inert={managementOpen || ['remove', 'delete-shop'].includes(dialog)}><button className="quick-sale-name" type="button" aria-expanded={showSelectedDescription} aria-controls="selected-description" onClick={() => setShowSelectedDescription(open => !open)}><small>Kiválasztott tárgy · leírás</small><strong>{selected.name}</strong></button><button className="quick-stock-button" type="button" onClick={() => openAdjustDialog(selected.id)} aria-label={`${selected.name} készletének módosítása, jelenleg ${selected.stock} darab`}><Package size={17} /> {selected.stock} db</button><label>Db<div className="quick-stepper"><button aria-label="Gyors mennyiség csökkentése" disabled={quantity <= 1} onClick={() => setQuantity(q => Math.max(1, q - 1))}><Minus size={16} /></button><output>{selected.stock ? quantity : 0}</output><button aria-label="Gyors mennyiség növelése" disabled={quantity >= selected.stock} onClick={() => setQuantity(q => Math.min(selected.stock, q + 1))}><Plus size={16} /></button></div></label><label>Eladási ár (gp)<input aria-label="Alkalmi eladási ár" type="number" min="0" step="1" value={salePrice} onChange={event => setSalePrice(event.target.value)} /></label><button className="button button-primary" disabled={selected.stock < quantity || selected.stock === 0 || salePrice === '' || Number(salePrice) < 0} onClick={sell}><Coins size={18} /> {selected.stock ? 'Eladás' : 'Elfogyott'}</button><div id="selected-description" className="selected-description" hidden={!showSelectedDescription}><div><span className={`rarity ${rarityClass(selected.rarity)}`}>{selected.rarity}</span><button type="button" aria-label="Leírás bezárása" onClick={() => setShowSelectedDescription(false)}><X size={18} /></button></div><p>{selected.description}</p><strong>Hatás</strong><p>{selected.effect}</p><button type="button" className="remove-shop-item" onClick={openRemoval}><Trash size={18} aria-hidden="true" /> Eltávolítás a boltból</button></div></section>}
     </>}
     </fieldset>}
-    <ManagementDrawer open={managementOpen} onClose={closeManagement} onAction={openManagementAction} shop={shop} catalogCount={catalog.length} hasSaleBar={dataReady && Boolean(selected)} firebaseReady={firebaseReady} onConnectCloud={connectCloud} onSignOut={disconnectCloud} dataState={dataState} onDataAction={handleDataAction} onRetryCloud={() => dataState.pending ? dataSession.flush() : dataSession.setUser(user)} />
+    <ManagementDrawer open={managementOpen} dialogOpen={Boolean(dialog)} onClose={closeManagement} onAction={openManagementAction} shop={shop} catalogCount={catalog.length} hasSaleBar={dataReady && Boolean(selected)} dataState={dataState} />
     {toast && <div className="toast" role="status"><CheckCircle size={21} weight="fill" /><span>{typeof toast === 'string' ? toast : toast.message}</span>{typeof toast === 'object' && toast.undoId === latestActivity?.id && canUndo && <button className="toast-undo" onClick={undoActivity}>Visszavonás</button>}<button aria-label="Értesítés bezárása" onClick={() => setToast('')}><X size={16} /></button></div>}
-    {dialog && <div className="dialog-backdrop" onKeyDown={handleRemovalKeys} onMouseDown={event => { if (event.target === event.currentTarget) { closeDialog(); } }}><div className={`dialog ${['catalog', 'random', 'add', 'import', 'activity'].includes(dialog) ? 'dialog-wide' : ''} ${editingMagicItem ? 'magic-editor-dialog' : ''} ${dialog === 'shop' ? 'shop-editor-dialog' : ''}`} role={dialog === 'delete-shop' ? 'alertdialog' : 'dialog'} aria-modal="true" aria-describedby={dialog === 'delete-shop' ? 'delete-shop-description' : undefined} aria-label={{ 'delete-shop': 'Bolt törlése', remove: 'Tárgy eltávolítása a boltból', shop: 'Bolt adatai', add: 'Tárgy hozzáadása', adjust: 'Készlet módosítása', activity: 'Eladásnapló', catalog: 'Közös varázstárgyak', random: 'Véletlen készlet', import: 'JSON import' }[dialog]}>{!editingMagicItem && dialog !== 'shop' && <div className="dialog-heading"><h2>{{ 'delete-shop': 'Bolt törlése', remove: 'Eltávolítás a boltból', add: 'Új tárgy a boltba', adjust: 'Készlet módosítása', activity: 'Eladásnapló', catalog: 'Közös varázstárgyak', random: 'Véletlen készlet', import: 'Tárgyak importálása JSON-ből' }[dialog]}</h2><button aria-label="Bezárás" onClick={closeDialog}><X size={22} /></button></div>}
+    {dialog && <div className="dialog-backdrop" onKeyDown={handleDialogKeys} onMouseDown={event => { if (event.target === event.currentTarget) { closeDialog(); } }}><div className={`dialog ${['catalog', 'random', 'add', 'import', 'activity'].includes(dialog) ? 'dialog-wide' : ''} ${editingMagicItem ? 'magic-editor-dialog' : ''} ${dialog === 'shop' ? 'shop-editor-dialog' : ''} ${dialog === 'cloud' ? 'cloud-data-dialog' : ''}`} role={dialog === 'delete-shop' ? 'alertdialog' : 'dialog'} aria-modal="true" aria-describedby={dialog === 'delete-shop' ? 'delete-shop-description' : undefined} aria-label={{ 'delete-shop': 'Bolt törlése', remove: 'Tárgy eltávolítása a boltból', shop: 'Bolt adatai', add: 'Tárgy hozzáadása', adjust: 'Készlet módosítása', activity: 'Eladásnapló', catalog: 'Közös varázstárgyak', random: 'Véletlen készlet', import: 'JSON import', cloud: 'Helyi és felhőadatok' }[dialog]}>{!editingMagicItem && dialog !== 'shop' && <div className="dialog-heading"><h2>{{ 'delete-shop': 'Bolt törlése', remove: 'Eltávolítás a boltból', add: 'Új tárgy a boltba', adjust: 'Készlet módosítása', activity: 'Eladásnapló', catalog: 'Közös varázstárgyak', random: 'Véletlen készlet', import: 'Tárgyak importálása JSON-ből', cloud: 'Helyi és felhőadatok' }[dialog]}</h2><button aria-label="Bezárás" onClick={closeDialog}><X size={22} /></button></div>}
+      {dialog === 'cloud' && <CloudDataDialog firebaseReady={firebaseReady} onConnectCloud={connectCloud} onSignOut={disconnectCloud} dataState={dataState} onDataAction={handleDataAction} onRetryCloud={() => dataState.pending ? dataSession.flush() : dataSession.setUser(user)} />}
       {dialog === 'delete-shop' && <div className="delete-shop-confirmation">
         {removalShop ? <><p id="delete-shop-description" className="dialog-intro">Biztosan törlöd a(z) <strong>{removalShop.name}</strong> boltot a teljes készletével és eladásnaplójával együtt?</p><p className="stock-adjust-preview">{removalShop.location || 'Ismeretlen hely'} · {removalShop.owner || 'Ismeretlen tulajdonos'}<br />{removalShop.items.length} különböző tárgy · {removalShop.items.reduce((sum, item) => sum + (Number(item.stock) || 0), 0)} db készlet · {removalShop.activity?.length ?? 0} naplóbejegyzés</p><p className="dialog-intro">A törlés végleges. A közös tárgykatalógus és a többi bolt megmarad. {user ? 'A felhőből töröljük; a külön helyi adatok megmaradnak.' : 'Az ezen az eszközön tárolt helyi adatokból töröljük.'}</p></> : <p id="delete-shop-description" className="dialog-intro">Ez a bolt már nem szerepel a listában.</p>}
         <div className="dialog-actions"><button type="button" className="button button-secondary delete-shop-cancel" onClick={cancelShopDeletion}>Mégse</button><button type="button" className="button button-primary" disabled={!removalShop || !dataReady || dataBusy} onClick={deleteShop}><Trash size={18} aria-hidden="true" /> Bolt törlése</button></div>
