@@ -2,6 +2,8 @@
 
 Tablet használatra tervezett D&D 2024 varázstárgybolt-kezelő. Több bolt, saját tárgylista, boltonként külön készlet és ár, eladásnapló, véletlen készlet és JSON export érhető el benne. Firebase-szel a bejelentkezett felhasználók az SRD alaplistából is másolhatnak tárgyakat. Firebase nélkül az adatok az adott böngésző helyi tárhelyén maradnak.
 
+A magyar felhasználói útmutató az alkalmazás **Kezelés → Útmutató** felületén érhető el. A tartalom az alkalmazás része, ezért a már betöltött nézetben kapcsolat nélkül is olvasható.
+
 ## Helyi futtatás
 
 **Szükséges:** Node.js 22 és npm. A projekt függőségeit a `package-lock.json` rögzíti.

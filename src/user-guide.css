@@ -1,0 +1,37 @@
+.guide-backdrop{bottom:86px;padding:14px}
+.guide-backdrop.no-sale-bar{bottom:0}
+.user-guide-dialog{display:flex;width:min(100%,980px);height:min(100%,850px);max-height:100%;overflow:hidden;padding:0;background:#f3ead9 url('/assets/parchment.png') center/900px 900px}
+.user-guide{display:flex;flex:1;min-width:0;min-height:0;flex-direction:column;color:#39261e}
+.guide-header{position:relative;flex:none;padding:23px 32px 17px;border-bottom:1px solid #c2ae91;background:linear-gradient(90deg,#f3ead9e8,#f3ead9bd),url('/assets/header-merchant.png') right center/auto 100% no-repeat}
+.guide-kicker{display:flex;align-items:center;gap:7px;color:#75513d;font-size:13px;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
+.guide-header h2{margin:4px 0 2px;color:#681f1a;font:700 50px/1 'Cormorant Garamond',Georgia,serif}
+.guide-header p{margin:0;max-width:550px;color:#584535;font-size:15px;line-height:1.4}
+.guide-close{position:absolute;top:17px;right:18px;display:grid;place-items:center;width:44px;height:44px;border:1px solid #b99f82;border-radius:4px;background:#f7eedfcf;color:#681f1a;cursor:pointer}
+.guide-search{display:flex;align-items:center;gap:10px;flex:none;margin:15px 26px;padding:0 13px;border:1px solid #aa9173;border-radius:5px;background:#fff9ee;color:#71443a}
+.guide-search input{flex:1;min-width:0;height:47px;padding:0;border:0;outline:0;background:transparent;color:#30231c;font-size:16px}
+.guide-search button{min-height:36px;border:0;background:transparent;color:#681f1a;font-weight:700;cursor:pointer}
+.guide-layout{display:grid;grid-template-columns:235px minmax(0,1fr);flex:1;min-height:0;border-top:1px solid #d0bea4}
+.guide-layout.is-empty{grid-template-columns:1fr}
+.guide-layout.is-empty .guide-nav{display:none}
+.guide-nav{display:flex;flex-direction:column;gap:4px;overflow:auto;padding:19px 12px 24px 20px;border-right:1px solid #cbb99e;background:#f7f0e275}
+.guide-nav button{display:flex;align-items:baseline;gap:9px;width:100%;min-height:47px;padding:9px 10px;border:1px solid transparent;border-radius:4px;background:transparent;color:#4d382c;text-align:left;font-size:15px;font-weight:700;line-height:1.2;cursor:pointer}
+.guide-nav button span{color:#936954;font-size:12px}
+.guide-nav button:hover,.guide-nav button.is-active{border-color:#bda98d;background:#fff9ee9e;color:#681f1a}
+.guide-content{overflow:auto;padding:21px 32px 45px;scroll-behavior:smooth}
+.guide-section{scroll-margin-top:12px;padding-bottom:26px}
+.guide-section+.guide-section{padding-top:24px;border-top:1px solid #c6b497}
+.guide-section-heading{display:flex;align-items:flex-start;gap:14px;margin-bottom:20px}
+.guide-section-heading>span{display:grid;place-items:center;flex:none;width:39px;height:39px;border:1px solid #9d785e;border-radius:50%;color:#681f1a;font:700 15px Georgia,serif}
+.guide-section-heading h3{margin:0;color:#681f1a;font:700 33px/1 'Cormorant Garamond',Georgia,serif}
+.guide-section-heading p{margin:3px 0 0;color:#705948;font-size:14px;line-height:1.35}
+.guide-topic{margin:0 0 23px;padding-left:53px}
+.guide-topic h4{margin:0 0 5px;color:#34251c;font:700 21px/1.15 'Cormorant Garamond',Georgia,serif}
+.guide-topic p,.guide-topic li{color:#43362c;font-size:15px;line-height:1.5}
+.guide-topic p{margin:0}
+.guide-topic ol{margin:9px 0 0;padding-left:22px}
+.guide-topic li+li{margin-top:5px}
+.guide-note{margin-top:11px;padding:10px 13px;border-left:3px solid #854631;background:#fff9eea3;color:#4b382a;font-size:14px;line-height:1.45}
+.guide-no-results{margin:12px 0;color:#584535;font-size:16px;line-height:1.4}
+.user-guide button:focus-visible,.guide-content:focus-visible,.guide-search:focus-within{outline:3px solid #a06937;outline-offset:2px}
+@media(max-width:760px){.guide-layout{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr)}.guide-nav{flex-direction:row;overflow-x:auto;overflow-y:hidden;gap:7px;padding:8px 14px;border-right:0;border-bottom:1px solid #cbb99e}.guide-nav button{flex:none;width:auto;min-height:42px;white-space:nowrap}.guide-content{padding:19px 21px 35px}.guide-topic{padding-left:0}.guide-header{padding:18px 62px 14px 22px}.guide-header h2{font-size:42px}.guide-search{margin:11px 14px}}
+@media(max-width:560px){.guide-backdrop{bottom:155px;padding:0}.guide-backdrop.no-sale-bar{bottom:0}.user-guide-dialog{height:100%;width:100%;max-height:100%;border-radius:0}.guide-header{padding-top:13px;padding-bottom:11px}.guide-header h2{font-size:38px}.guide-header p{font-size:13px}.guide-close{top:12px;right:12px;width:40px;height:40px}.guide-section-heading h3{font-size:29px}.guide-section-heading{gap:9px}.guide-section-heading>span{width:34px;height:34px}.guide-topic h4{font-size:20px}.guide-topic p,.guide-topic li{font-size:14px}}

@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { Books, CaretRight, ClockCounterClockwise, Cloud, DiceFive, DownloadSimple, GearSix, Plus, Storefront, Trash, UploadSimple, X } from '@phosphor-icons/react';
+import { BookOpen, Books, CaretRight, ClockCounterClockwise, Cloud, DiceFive, DownloadSimple, GearSix, Plus, Storefront, Trash, UploadSimple, X } from '@phosphor-icons/react';
 import { publicAssetUrl } from './itemTypes.js';
 
 function DrawerAction({ icon: Icon, title, description, onClick, trailing, disabled }) {
@@ -46,6 +46,7 @@ export function ManagementDrawer({ open, dialogOpen, onClose, onAction, shop, ca
       <header className="management-header">
         <img src={publicAssetUrl('/assets/header-merchant.png')} alt="" />
         <button ref={closeRef} className="management-close" type="button" onClick={onClose} aria-label="Kezelés bezárása"><X size={28} /></button>
+        <button className="management-guide" type="button" onClick={() => onAction('guide')}><BookOpen size={18} aria-hidden="true" /> Útmutató</button>
         <h2 id="management-title">Kezelés</h2>
         <p>A bolt és a készlet kezelése</p>
         <span className="management-rule" aria-hidden="true" />

@@ -38,6 +38,8 @@ Example magic items are development-only starter data. A fresh production instal
 
 The user wants this repository published at its GitHub Pages project URL through GitHub Actions, without a custom domain. Keep the existing local and Sites builds working alongside the Pages build.
 
+User guide placement selected on 2026-10-22: make the primary guide part of the app, available without sign-in or a network connection. Put a clearly labeled “Útmutató” entry in the header of the “Kezelés” drawer, opening a full-page parchment guide with short, searchable chapters. Keep the live-play screen clear. Explain shop price versus one-time sale price and local/cloud replacement at the relevant controls as well. If a shareable web version is added, generate it from the same guide content so the two versions stay consistent. The chapter outline is in `USER_GUIDE_OUTLINE.md`.
+
 Before making substantial visual changes, use the Product Design plugin's `get-context` skill when the visual source is unclear or no longer matches the current goal. When the user gives durable project-specific design feedback, preferences, or decisions, record them in `AGENTS.md`.
 
 When implementing from a selected generated mock, treat that image as the source of truth for layout, component anatomy, density, spacing, color, typography, visible content, and hierarchy.
