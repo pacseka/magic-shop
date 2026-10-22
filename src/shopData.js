@@ -20,7 +20,7 @@ export const blankShop = () => ({
 export function loadShops() {
   try {
     const saved = JSON.parse(localStorage.getItem(storageKey));
-    if (Array.isArray(saved?.shops) && saved.shops.length) return saved.shops;
+    if (Array.isArray(saved?.shops)) return saved.shops;
     const oldItems = JSON.parse(localStorage.getItem(legacyKey));
     if (Array.isArray(oldItems) && oldItems.length) return [{ ...defaultShop, items: oldItems }];
   } catch { /* Fall back to an empty starter shop when local data is damaged. */ }
@@ -31,6 +31,11 @@ export const salePriceFor = (item, shop) => item?.shopPrice != null
   ? Number(item.shopPrice)
   : Math.round(Number(item?.price || 0) * Number(shop?.multiplier || 1));
 export const makeId = () => globalThis.crypto?.randomUUID?.() ?? `shop-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+
+export function removeShop(ledger, shopId) {
+  if (!ledger.shops.some(shop => shop.id === shopId)) return ledger;
+  return { ...ledger, shops: ledger.shops.filter(shop => shop.id !== shopId) };
+}
 
 export function recordStockChange(shop, { id = makeId(), at = new Date().toISOString(), type, itemId, delta, unitPrice, reason = '' }) {
   const item = shop.items.find(entry => entry.id === itemId);
@@ -103,7 +108,7 @@ export const shopItemFromCatalog = (item, stock = 1) => ({ ...itemDefinition(ite
 // Older ledgers only held shop inventories. Preserve each shop's stock while
 // building one reusable definition for every distinct name and rarity.
 export function normalizeLedger(data) {
-  const shops = Array.isArray(data?.shops) && data.shops.length
+  const shops = Array.isArray(data?.shops)
     ? data.shops : [{ ...defaultShop, items: defaultShop.items.map(item => ({ ...item })) }];
   const catalog = Array.isArray(data?.catalog) ? data.catalog.map(itemDefinition) : [];
   const byId = new Map(catalog.map(item => [item.id, item]));
@@ -125,7 +130,7 @@ export function normalizeLedger(data) {
 export function loadLedger(seedItems = [], storage = localStorage) {
   try {
     const saved = JSON.parse(storage.getItem(storageKey));
-    if (Array.isArray(saved?.shops) && saved.shops.length) return normalizeLedger(saved);
+    if (Array.isArray(saved?.shops)) return normalizeLedger(saved);
     const oldItems = JSON.parse(storage.getItem(legacyKey));
     if (Array.isArray(oldItems) && oldItems.length) return normalizeLedger({ shops: [{ ...defaultShop, items: oldItems }] });
   } catch { /* Fall back to a fresh starter shop when local data is damaged. */ }

@@ -39,6 +39,13 @@
 .cloud-copy-confirm>strong{display:block;margin-bottom:7px;color:#681f1a}
 .cloud-restore{display:block;width:100%;margin:8px 0;padding:8px 12px!important;text-align:left}
 .ledger-workspace{min-width:0;margin:0;padding:0;border:0}
+.empty-shops{display:grid;justify-items:center;gap:12px;padding:50px 20px;text-align:center;color:#68574a}
+.empty-shops>svg{color:#681f1a}
+.empty-shops h2{margin:0;color:#681f1a;font:700 36px/1.1 'Cormorant Garamond',Georgia,serif}
+.empty-shops p{max-width:420px;margin:0 0 6px;line-height:1.5}
+.delete-shop-confirmation{display:grid;gap:14px}
+.delete-shop-confirmation .dialog-intro{margin:0}
+.delete-shop-confirmation .stock-adjust-preview{line-height:1.6}
 .data-source-status{display:flex;align-items:center;flex-wrap:wrap;gap:4px 12px;padding:4px 1px;color:#68574a;font-size:12px;overflow-wrap:anywhere}
 .data-source-status strong{font-weight:600}
 .data-source-status button{min-height:36px;border:1px solid #9c826b;border-radius:4px;background:#f3ead9;color:#681f1a}

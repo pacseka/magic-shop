@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Books, CaretRight, ClockCounterClockwise, Cloud, DiceFive, DownloadSimple, GearSix, Plus, Storefront, UploadSimple, X } from '@phosphor-icons/react';
+import { Books, CaretRight, ClockCounterClockwise, Cloud, DiceFive, DownloadSimple, GearSix, Plus, Storefront, Trash, UploadSimple, X } from '@phosphor-icons/react';
 import { publicAssetUrl } from './itemTypes.js';
 
 function DrawerAction({ icon: Icon, title, description, onClick, trailing, expanded, disabled }) {
@@ -68,14 +68,15 @@ export function ManagementDrawer({ open, onClose, onAction, shop, catalogCount, 
       <div className="management-content">
         <section className="management-group" aria-labelledby="management-shop-title">
           <div className="management-group-heading"><Storefront size={28} aria-hidden="true" /><div><h3 id="management-shop-title">Bolt</h3><p>A bolt alapadatai és beállításai.</p></div></div>
-          <DrawerAction disabled={!canEdit} icon={GearSix} title="Bolt szerkesztése" description={shop?.name || 'A bolt adatai'} onClick={() => onAction('edit-shop')} />
+          <DrawerAction disabled={!canEdit || !shop} icon={GearSix} title="Bolt szerkesztése" description={shop?.name || 'Előbb hozz létre egy boltot.'} onClick={() => onAction('edit-shop')} />
           <DrawerAction disabled={!canEdit} icon={Plus} title="Új bolt" description="Új kereskedés létrehozása." onClick={() => onAction('new-shop')} />
+          <DrawerAction disabled={!canEdit || !shop} icon={Trash} title="Bolt törlése" description={shop ? `${shop.name} készletének és naplójának törlése.` : 'Nincs törölhető bolt.'} onClick={() => onAction('delete-shop')} />
         </section>
         <section className="management-group" aria-labelledby="management-catalog-title">
           <div className="management-group-heading"><Books size={28} aria-hidden="true" /><div><h3 id="management-catalog-title">Katalógus és készlet</h3><p>Varázstárgyak és készletkezelés.</p></div></div>
           <DrawerAction disabled={!canEdit} icon={Books} title="Közös varázstárgyak" description={`${catalogCount} tárgy a közös listában.`} onClick={() => onAction('catalog')} />
-          <DrawerAction disabled={!canEdit} icon={DiceFive} title="Véletlen készlet" description="A bolt készletének sorsolása." onClick={() => onAction('random')} />
-          <DrawerAction disabled={!canEdit} icon={ClockCounterClockwise} title="Eladásnapló" description="Eladások és készletváltozások." onClick={() => onAction('activity')} />
+          <DrawerAction disabled={!canEdit || !shop} icon={DiceFive} title="Véletlen készlet" description="A bolt készletének sorsolása." onClick={() => onAction('random')} />
+          <DrawerAction disabled={!canEdit || !shop} icon={ClockCounterClockwise} title="Eladásnapló" description="Eladások és készletváltozások." onClick={() => onAction('activity')} />
         </section>
         <section className="management-group" aria-labelledby="management-data-title">
           <div className="management-group-heading"><Cloud size={28} aria-hidden="true" /><div><h3 id="management-data-title">Adatok és felhő</h3><p>Importálás, exportálás és kézi másolás.</p></div></div>
@@ -102,7 +103,7 @@ export function ManagementDrawer({ open, onClose, onAction, shop, catalogCount, 
             </div>}
           </div>}
         </section>
-        <details className="management-shop-notes"><summary>Bolti tudnivalók</summary><p>{shop?.description || 'Még nincs leírás ehhez a bolthoz.'}</p>{[shop?.contact && `Kapcsolat: ${shop.contact}`, shop?.faction && `Frakció: ${shop.faction}`, shop?.relationship && `Viszony: ${shop.relationship}`, shop?.adventureHook && `Kalandötlet: ${shop.adventureHook}`].filter(Boolean).map(note => <p key={note}>{note}</p>)}<p>Árszorzó ×{String(shop?.multiplier ?? 1).replace('.', ',')}</p></details>
+        {shop && <details className="management-shop-notes"><summary>Bolti tudnivalók</summary><p>{shop?.description || 'Még nincs leírás ehhez a bolthoz.'}</p>{[shop?.contact && `Kapcsolat: ${shop.contact}`, shop?.faction && `Frakció: ${shop.faction}`, shop?.relationship && `Viszony: ${shop.relationship}`, shop?.adventureHook && `Kalandötlet: ${shop.adventureHook}`].filter(Boolean).map(note => <p key={note}>{note}</p>)}<p>Árszorzó ×{String(shop?.multiplier ?? 1).replace('.', ',')}</p></details>}
       </div>
     </aside>
   </div>;

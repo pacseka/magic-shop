@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createLedgerSession } from '../src/ledgerSession.js';
-import { normalizeLedger, storageKey } from '../src/shopData.js';
+import { normalizeLedger, removeShop, storageKey } from '../src/shopData.js';
 
 const ledger = (name, stock = 3) => normalizeLedger({ shops: [{ id: name, name, multiplier: 1.5, items: [{ id: 'wand', name: 'Pálca', rarity: 'Ritka', price: 400, shopPrice: 500, stock }], activity: [] }] });
 const user = { uid: 'first', displayName: 'Teszt' };
@@ -211,4 +211,41 @@ test('a successful cloud upload remains active even if caching fails, without re
   reloaded.setOnline(false);
   await reloaded.setUser(user);
   assert.equal(reloaded.getSnapshot().ready, false);
+});
+
+test('deleting the last local shop survives reload and never modifies cloud data', async () => {
+  const env = setup();
+  const session = env.session();
+  await session.setUser(null);
+  session.update(data => removeShop(data, 'Helyi'));
+  assert.deepEqual(session.getSnapshot().ledger.shops, []);
+  const reloaded = env.session();
+  await reloaded.setUser(null);
+  assert.deepEqual(reloaded.getSnapshot().ledger.shops, []);
+  assert.equal(reloaded.getSnapshot().ledger.catalog.length, 1);
+  await reloaded.setUser(user);
+  assert.equal(reloaded.getSnapshot().ledger.shops[0].name, 'Felhő');
+});
+
+test('deleting the last cloud shop offline persists across reconnect and cloud reload without changing local stock', async () => {
+  const env = setup();
+  const session = env.session();
+  await session.setUser(user);
+  env.setOffline(true);
+  session.setOnline(false);
+  session.update(data => removeShop(data, 'Felhő'));
+  const reloaded = env.session();
+  reloaded.setOnline(false);
+  await reloaded.setUser(user);
+  assert.deepEqual(reloaded.getSnapshot().ledger.shops, []);
+  assert.equal(reloaded.getSnapshot().pending, true);
+  env.setOffline(false);
+  reloaded.setOnline(true);
+  await reloaded.flush();
+  const onlineReload = env.session();
+  await onlineReload.setUser(user);
+  assert.deepEqual(onlineReload.getSnapshot().ledger.shops, []);
+  assert.equal(onlineReload.getSnapshot().ledger.catalog.length, 1);
+  await onlineReload.setUser(null);
+  assert.equal(onlineReload.getSnapshot().ledger.shops[0].items[0].stock, 3);
 });
