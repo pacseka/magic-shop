@@ -2,8 +2,23 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
+    function isCatalogAdmin() {
+      return request.auth != null &&
+        exists(/databases/$(database)/documents/catalogAdmins/$(request.auth.uid));
+    }
+
     match /users/{userId}/ledgers/{ledgerId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    match /baseCatalog/{itemId} {
+      allow read: if request.auth != null;
+      allow create, update, delete: if isCatalogAdmin();
+    }
+
+    match /catalogAdmins/{userId} {
+      allow get: if request.auth != null && request.auth.uid == userId;
+      allow list, create, update, delete: if false;
     }
   }
 }

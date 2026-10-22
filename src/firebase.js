@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
-import { doc, getDocFromServer, getFirestore, setDoc } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDocFromServer, getDocsFromServer, getFirestore, setDoc, writeBatch } from 'firebase/firestore';
 
 const config = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -39,4 +39,31 @@ export async function loadCloudLedger(uid) {
 export function saveCloudLedger(uid, ledger) {
   writeQueue = writeQueue.catch(() => {}).then(() => setDoc(ledgerRef(uid), { schemaVersion: 2, ...ledger, updatedAt: Date.now() }));
   return writeQueue;
+}
+
+export async function loadBaseCatalog() {
+  if (!db) throw new Error('A Firebase még nincs beállítva.');
+  const snapshot = await getDocsFromServer(collection(db, 'baseCatalog'));
+  return snapshot.docs.map(entry => ({ ...entry.data(), id: entry.id })).sort((a, b) => a.name.localeCompare(b.name, 'en'));
+}
+
+export async function isBaseCatalogAdmin(uid) {
+  if (!db || !uid) return false;
+  return (await getDocFromServer(doc(db, 'catalogAdmins', uid))).exists();
+}
+
+export async function uploadBaseCatalog(items) {
+  if (!db) throw new Error('A Firebase még nincs beállítva.');
+  // Each write checks the admin marker in Security Rules. Keep batches below
+  // Firestore's 20 document-access-call limit even without rule cache reuse.
+  for (let offset = 0; offset < items.length; offset += 18) {
+    const batch = writeBatch(db);
+    for (const item of items.slice(offset, offset + 18)) batch.set(doc(db, 'baseCatalog', item.id), item);
+    await batch.commit();
+  }
+}
+
+export function deleteBaseCatalogItem(id) {
+  if (!db) throw new Error('A Firebase még nincs beállítva.');
+  return deleteDoc(doc(db, 'baseCatalog', id));
 }

@@ -26,6 +26,10 @@ Cloud/local behavior selected on 2026-10-22: signed-in users use cloud data; sig
 
 The user wants a shared magic-item catalog: items can be created centrally and added to any shop, and every item created in a shop must also enter the shared catalog. Shops should support random inventory generation based on local magic prevalence and practical shop factors such as size, rarity limit, and specialty, with a preview before applying it. Keep each shop's stock independent.
 
+The user also wants an owner-managed Firestore base catalog of roughly 200–300 magic items, readable by signed-in users. Users should be able to explicitly copy items from it into their own personal catalog. Each imported item is an independent, editable, one-time copy; later changes to the base catalog must not update personal copies. Keep this global base catalog distinct from each user's existing catalog and shop stock.
+Use `baseCatalog/{itemId}` for that global list and a Console-created `catalogAdmins/{uid}` marker to grant owner writes; clients must not be able to create admin markers. The owner can manage the list in the existing app, without a separate admin app.
+Build the initial base catalog from the official D&D SRD 5.2.1 magic items. Preserve the official English item names and use English descriptions/effect summaries; do not add Hungarian descriptions to these records.
+
 Magic items use the nine D&D 2024 magic-item categories. Creating or editing an item should offer an illustrated default image for each category and a custom image URL, with bundled defaults kept in `public/assets` and only the selected path or URL in saved data. Suggest base prices from the D&D 2024 rarity table when rarity changes, keep the amount editable, account for consumable potions, and treat artifacts as priceless by default.
 
 The shared magic-item catalog should accept machine-readable JSON import from a file or pasted text. Accept a single item, an array, or the catalog from the app's JSON export; preview valid entries, duplicates, and errors before applying. Import catalog definitions without changing any shop's stock.

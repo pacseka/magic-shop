@@ -60,7 +60,8 @@ export function ManagementDrawer({ open, dialogOpen, onClose, onAction, shop, ca
         </section>
         <section className="management-group" aria-labelledby="management-catalog-title">
           <div className="management-group-heading"><Books size={28} aria-hidden="true" /><div><h3 id="management-catalog-title">Katalógus és készlet</h3><p>Varázstárgyak és készletkezelés.</p></div></div>
-          <DrawerAction disabled={!canEdit} icon={Books} title="Közös varázstárgyak" description={`${catalogCount} tárgy a közös listában.`} onClick={() => onAction('catalog')} />
+          <DrawerAction disabled={!canEdit} icon={Books} title="Saját tárgylista" description={`${catalogCount} tárgy · minden saját boltban használható.`} onClick={() => onAction('catalog')} />
+          <DrawerAction disabled={!canEdit || !user} icon={Books} title="SRD alaplista" description={user ? 'Tárgyak másolása a saját listádba.' : 'Bejelentkezés után érhető el.'} onClick={() => onAction('base-catalog')} />
           <DrawerAction disabled={!canEdit || !shop} icon={DiceFive} title="Véletlen készlet" description="A bolt készletének sorsolása." onClick={() => onAction('random')} />
           <DrawerAction disabled={!canEdit || !shop} icon={ClockCounterClockwise} title="Eladásnapló" description="Eladások és készletváltozások." onClick={() => onAction('activity')} />
         </section>
