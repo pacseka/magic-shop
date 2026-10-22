@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { canUndoLatestActivity, itemDefinition, loadShops, normalizeLedger, recordItemRemoval, recordRandomStock, recordStockChange, salePriceFor, shopItemFromCatalog, storageKey, undoLatestActivity } from '../src/shopData.js';
+import { canUndoLatestActivity, itemDefinition, loadLedger, loadShops, normalizeLedger, recordItemRemoval, recordRandomStock, recordStockChange, removeShop, salePriceFor, shopItemFromCatalog, storageKey, undoLatestActivity } from '../src/shopData.js';
 
 test('migrates the previous single-shop inventory without losing stock', () => {
   const saved = new Map([['rezhold-shop-items-v3', JSON.stringify([{ id: 'custom', name: 'Próbatárgy', stock: 3, price: 80 }])]]);
@@ -112,4 +112,29 @@ test('does not undo a removal over a re-added item from the same catalog', () =>
   const restocked = { ...removed, items: [{ ...item, id: 'new', stock: 4 }] };
   assert.equal(canUndoLatestActivity(restocked), false);
   assert.equal(undoLatestActivity(restocked), null);
+});
+
+test('deletes only the targeted shop with its stock and activity, keeping the shared catalog and other shops', () => {
+  const definition = { id: 'wand', name: 'Pálca', rarity: 'Ritka', price: 400 };
+  const target = { id: 'delete', name: 'Törlendő', items: [{ ...shopItemFromCatalog(definition), stock: 4, shopPrice: 620 }], activity: [{ id: 'sale' }] };
+  const other = { id: 'keep', name: 'Megmaradó', items: [shopItemFromCatalog(definition, 2)], activity: [] };
+  const ledger = { catalog: [definition], shops: [target, other] };
+  const result = removeShop(ledger, target.id);
+  assert.deepEqual(result.shops, [other]);
+  assert.strictEqual(result.catalog, ledger.catalog);
+  assert.strictEqual(result.shops[0], other);
+  assert.deepEqual(ledger.shops, [target, other]);
+  assert.strictEqual(removeShop(ledger, 'missing'), ledger);
+});
+
+test('deleting the last shop survives normalization and local reload without restoring legacy stock or development examples', () => {
+  const catalog = [{ id: 'wand', name: 'Pálca', rarity: 'Ritka', price: 400 }];
+  const empty = removeShop({ shops: [{ id: 'last', items: [shopItemFromCatalog(catalog[0])] }], catalog }, 'last');
+  const saved = new Map([[storageKey, JSON.stringify(empty)], ['rezhold-shop-items-v3', JSON.stringify([{ id: 'old', stock: 5 }])]]);
+  globalThis.localStorage = { getItem: key => saved.get(key) ?? null };
+  try {
+    assert.deepEqual(normalizeLedger(empty), { shops: [], catalog });
+    assert.deepEqual(loadLedger([{ id: 'dev-example', stock: 2 }]), { shops: [], catalog });
+    assert.deepEqual(loadShops(), []);
+  } finally { delete globalThis.localStorage; }
 });
