@@ -1,0 +1,42 @@
+.procurement-dialog{display:grid;gap:14px;color:#3f3025}
+.procurement-dialog .dialog-intro{margin:0}
+.procurement-tabs{display:flex;gap:8px;border-bottom:1px solid #bea88b}
+.procurement-tabs button{min-height:43px;padding:7px 11px;border:0;border-bottom:3px solid transparent;background:transparent;color:#654839;font-size:15px;font-weight:700}
+.procurement-tabs button.is-active{border-bottom-color:#741d1b;color:#681f1a}
+.procurement-message{margin:0;padding:9px 11px;border:1px solid #9fba94;border-radius:4px;background:#eef2df;color:#35502e;font-size:14px}
+.procurement-dialog label{display:grid;gap:6px;font-size:14px;font-weight:700;color:#47362a}
+.procurement-dialog input:not([type=checkbox]):not([type=radio]),.procurement-dialog select{width:100%;min-height:43px;padding:7px 10px;border:1px solid #a9937f;border-radius:5px;background:#fff9ee;color:#292018;font-size:16px}
+.procurement-dialog label small{font-size:12px;font-weight:400;color:#725f4d}
+.procurement-catalog{display:grid;max-height:185px;overflow:auto;border:1px solid #c3b093;border-radius:5px;background:#fff9ee80}
+.procurement-catalog label{display:flex;align-items:center;gap:10px;min-height:55px;padding:8px 11px;border-bottom:1px solid #dacbb8;cursor:pointer}
+.procurement-catalog label:last-child{border-bottom:0}
+.procurement-catalog label.is-selected{background:#741d1b12}
+.procurement-catalog input{flex:none;width:18px;height:18px;accent-color:#741d1b}
+.procurement-catalog span{display:grid;gap:2px}
+.procurement-catalog strong{font-size:16px;color:#382820}
+.procurement-no-match{display:grid;gap:9px;justify-items:start}
+.procurement-no-match .empty-results{padding:0;margin:0}
+.procurement-options,.procurement-quote{display:grid;gap:12px;padding:13px;border:1px solid #c7b59a;border-radius:5px;background:#fbf4e7}
+.procurement-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.procurement-dialog .procurement-check{display:flex;align-items:center;gap:9px;min-height:35px}
+.procurement-check input{width:19px;height:19px;accent-color:#741d1b}
+.procurement-chance{margin:0;color:#654839;font-size:14px}
+.procurement-chance strong{color:#681f1a;font-size:19px}
+.procurement-options>.button{justify-self:start}
+.procurement-quote h3{margin:0;color:#681f1a;font:700 27px/1.1 'Cormorant Garamond',Georgia,serif}
+.procurement-quote .field-hint{margin:0;color:#6d5847;font-size:13px}
+.procurement-quote .dialog-actions{position:sticky;bottom:-26px;margin:2px -13px -13px;padding:12px 13px;border-top:1px solid #cab9a1;background:#f3ead9}
+.procurement-orders{display:grid;gap:9px;max-height:min(58vh,530px);overflow:auto}
+.procurement-order{padding:11px 13px;border:1px solid #c3b093;border-radius:5px;background:#fff9eea3}
+.procurement-order>div:first-child{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.procurement-order strong{color:#382820;font-size:17px}
+.procurement-order small{color:#715c4a}
+.procurement-order p{margin:7px 0 0;font-size:14px;line-height:1.35}
+.procurement-order .procurement-note{color:#604d3d;font-style:italic}
+.procurement-status{padding:4px 7px;border-radius:4px;background:#e9dfca;color:#604d3d;font-size:12px;font-weight:700;white-space:nowrap}
+.procurement-status.status-ordered{background:#e8d1a4;color:#644111}
+.procurement-status.status-received{background:#d6e7ce;color:#35502e}
+.procurement-order-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:11px}
+.procurement-order-actions .button{min-height:40px;padding:0 10px;font-size:14px}
+.empty-results .button{margin-top:10px}
+@media(max-width:560px){.procurement-grid{grid-template-columns:1fr}.procurement-tabs button{font-size:13px}.procurement-order>div:first-child{align-items:flex-start}.procurement-order-actions .button{flex:1}}

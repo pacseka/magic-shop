@@ -6,6 +6,7 @@
 .management-header h2,.management-header p,.management-rule{position:relative;z-index:1}
 .management-header h2{margin:0;color:#681f1a;font:700 58px/1 'Cormorant Garamond',Georgia,serif}
 .management-header p{margin:3px 0 18px;color:#544235;font-size:17px}
+.management-version{display:inline-block;margin-left:8px;padding:2px 7px;border:1px solid #ac9a80;border-radius:3px;background:#f7eedfc9;color:#681f1a;font:700 12px/1.2 Georgia,serif;vertical-align:middle;white-space:nowrap}
 .management-rule{display:block;width:48%;border-top:1px solid #ac9a80}
 .management-rule:after{position:absolute;top:-5px;left:52%;width:8px;height:8px;transform:rotate(45deg);border:1px solid #8e785f;background:#f3ead9;content:''}
 .management-close{position:absolute;top:19px;right:21px;z-index:2;width:43px;height:43px;border:0;background:#f3ead9bb;color:#681f1a;display:grid;place-items:center;cursor:pointer}

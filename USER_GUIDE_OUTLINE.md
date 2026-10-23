@@ -24,9 +24,12 @@ Az útmutató elsődleges helye az alkalmazás **Kezelés → Útmutató** felü
 - **Melyik ár mit változtat?** A saját listában lévő alapárra a bolt árszorzója hat. A tárgy bolti árát a részleteknél külön lehet menteni, csak az adott boltban. Az eladáskor átírt ár kizárólag arra az egy eladásra vonatkozik.
 - **Gyors készletkorrekció:** a kiválasztott tárgy készletszámából nyitható hozzáadás vagy levonás, opcionális megjegyzéssel.
 
-## 4. A bolt készletének kezelése
+## 4. Bolt, készlet és beszerzések
 
 - **Véletlen készlet:** környék, boltméret, ritkasághatár és profil beállítása, sorsolás, előnézet, majd hozzáadás a meglévő készlethez.
+- **Hiányzó tárgy beszerzése:** a saját tárgylistából kiválasztott tárgy elérhetőségének sorsolása, az ajánlat áttekintése és mentése.
+- **Beszerzési szabályok:** településméret szerinti esélytábla, környéki mágia és bolti profil módosítói, ritkaság szerinti játékbeli idő, d6 felár és egyszeri ajánlati ár.
+- **Megrendelések követése:** függő, sikertelen, lemondott és megérkezett próbák; a megérkezéskor egy darab készletre kerül, a naplózott változás visszavonható.
 - **Tárgy eltávolítása egy boltból:** a részleteknél megerősített eltávolítás csak annak a boltnak a készletét érinti. A saját tárgylista és más boltok készlete megmarad.
 - **Eladásnapló és visszavonás:** eladások, készletkorrekciók és eltávolítások áttekintése; a legutóbbi visszavonható készletművelet visszaállítása.
 - **Bolt törlése:** a megerősítésben ellenőrizni kell az érintett boltot, készletet és naplót. A saját tárgylista és a többi bolt megmarad.
@@ -37,6 +40,7 @@ Az útmutató elsődleges helye az alkalmazás **Kezelés → Útmutató** felü
 - **Kapcsolat nélkül:** a bejelentkezett fiók saját offline másolatával lehet folytatni a munkát; a függő változások visszakapcsolódáskor feltöltődnek. Ha nincs ilyen másolat, a helyi adatok nem jelennek meg a felhőadatok helyén.
 - **Kézi másolás a két adatkészlet között:** a felhő helyire másolása és a helyi felhőbe feltöltése mindig a teljes céladatkészletet cseréli le. Megerősítés szükséges, az előző célváltozatról visszaállítható mentés készül.
 - **JSON-export:** az éppen aktív boltok és a saját tárgylista mentése. Az SRD alaplista nem része az exportnak.
+- **Alkalmazásverzió:** az aktuális verzió a Kezelés fiókban és az útmutató fejlécében látható; a változások a repository `CHANGELOG.md` fájljában követhetők.
 - **Kijelentkezés:** visszatérés a külön helyi adatokhoz automatikus másolás nélkül.
 
 ## 6. Gyors válaszok

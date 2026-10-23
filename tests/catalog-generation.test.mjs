@@ -18,7 +18,7 @@ test('older shop inventories become a shared catalog without merging stocks', ()
 test('local ledger loads catalog-only items for reuse', () => {
   const data = { schemaVersion: 2, shops: [{ id: 'one', items: [] }], catalog: [{ id: 'wand', name: 'Pálca', rarity: 'Ritka', price: 4000 }] };
   globalThis.localStorage = { getItem: key => key === storageKey ? JSON.stringify(data) : null };
-  try { assert.deepEqual(loadLedger(), { shops: [{ ...data.shops[0], activity: [] }], catalog: data.catalog }); }
+  try { assert.deepEqual(loadLedger(), { shops: [{ ...data.shops[0], activity: [], procurements: [] }], catalog: data.catalog }); }
   finally { delete globalThis.localStorage; }
 });
 

@@ -9,12 +9,12 @@ export const defaultShop = {
   id: 'rezhold', name: 'A Rézhold Kereskedés', location: 'Vízmély', owner: 'Mira Rézhold',
   description: 'Varázstárgyak és ritka úti felszerelések a kalandozóknak.',
   multiplier: 1, contact: '', faction: '', relationship: '', adventureHook: '',
-  items: [], activity: [],
+  items: [], activity: [], procurements: [], settlementSize: 'city', magicPrevalence: 'normal',
 };
 
 export const blankShop = () => ({
   name: '', location: '', owner: '', description: '', multiplier: 1,
-  contact: '', faction: '', relationship: '', adventureHook: '',
+  contact: '', faction: '', relationship: '', adventureHook: '', settlementSize: 'city', magicPrevalence: 'normal',
 });
 
 export function loadShops() {
@@ -78,6 +78,7 @@ export function recordItemRemoval(shop, itemId, { id = makeId(), at = new Date()
 
 export function canUndoLatestActivity(shop) {
   const latest = (shop?.activity ?? []).findLast(event => !event.undoneAt);
+  if (latest?.type === 'procurement' && !(shop.procurements ?? []).some(order => order.id === latest.procurementId && order.status === 'received')) return false;
   if (latest?.type === 'removal') {
     return Boolean(latest.changes?.length && latest.changes.every(change => change.removedItem
       && !shop.items.some(item => item.id === change.itemId || (change.removedItem.catalogId && item.catalogId === change.removedItem.catalogId))));
@@ -96,7 +97,9 @@ export function undoLatestActivity(shop, at = new Date().toISOString()) {
   if (latest.type === 'removal') {
     for (const change of latest.changes) items.splice(change.index, 0, { ...change.removedItem });
   }
-  return { ...shop, items, activity: shop.activity.map(event => event.id === latest.id ? { ...event, undoneAt: at } : event) };
+  return { ...shop, items,
+    procurements: latest.type === 'procurement' ? (shop.procurements ?? []).map(order => order.id === latest.procurementId ? { ...order, status: 'ordered', receivedAt: null } : order) : shop.procurements,
+    activity: shop.activity.map(event => event.id === latest.id ? { ...event, undoneAt: at } : event) };
 }
 
 export const itemDefinition = item => {
@@ -113,7 +116,7 @@ export function normalizeLedger(data) {
   const catalog = Array.isArray(data?.catalog) ? data.catalog.map(itemDefinition) : [];
   const byId = new Map(catalog.map(item => [item.id, item]));
   const byName = new Map(catalog.map(item => [`${item.name?.trim().toLocaleLowerCase('hu-HU')}|${item.rarity}`, item.id]));
-  const nextShops = shops.map(shop => ({ ...shop, activity: Array.isArray(shop.activity) ? shop.activity : [], items: (shop.items ?? []).map(item => {
+  const nextShops = shops.map(shop => ({ ...shop, activity: Array.isArray(shop.activity) ? shop.activity : [], procurements: Array.isArray(shop.procurements) ? shop.procurements : [], items: (shop.items ?? []).map(item => {
     const key = `${item.name?.trim().toLocaleLowerCase('hu-HU')}|${item.rarity}`;
     const catalogId = byId.has(item.catalogId) ? item.catalogId : byName.get(key) ?? item.catalogId ?? item.id ?? makeId();
     if (!byId.has(catalogId)) {

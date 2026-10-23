@@ -83,8 +83,8 @@ export const guideSections = [
   },
   {
     id: 'keszlet',
-    title: 'Bolt és készlet kezelése',
-    summary: 'Sorsolj készletet, nézd át a naplót, és kezeld a boltokat.',
+    title: 'Bolt, készlet és beszerzések',
+    summary: 'Sorsolj készletet, szerezz be hiányzó tárgyat, és kezeld a boltokat.',
     topics: [
       {
         title: 'Véletlen készlet sorsolása',
@@ -92,12 +92,66 @@ export const guideSections = [
         steps: ['Kattints a Készlet sorsolása gombra.', 'Nézd át az előnézetet; ha nem tetszik, sorsolj újra.', 'A Készlet hozzáadása a meglévő mennyiségekhez adja a sorsolt darabokat, nem írja felül őket.'],
       },
       {
+        title: 'Hiányzó tárgy beszerzése',
+        text: 'Ha a bolti keresés nem talál tárgyat, válaszd a Beszerzés ellenőrzése gombot. A Kezelés → Beszerzések alatt is indíthatsz ajánlatot. A saját tárgylistából válassz; az SRD alaplistából előbb kifejezetten másold a tárgyat a saját listádba.',
+        steps: ['A bolt településmérete és a környék mágiája alapból kitöltődik, de az ajánlatnál felülírható. A bolt profiljába illő tárgy további +10 százalékpont esélyt kap.', 'Sorsold ki az elérhetőséget d100-zal. Siker esetén az időt és a felárat is. A dobás, az eredmény, az idő és az ajánlati ár átírható.', 'Mentsd a megrendelést vagy a sikertelen próbát, majd kövesd az állapotát a Kezelés → Beszerzések alatt.'],
+        note: 'Az artefaktumok beszerzése mesélői döntés; a sorsoló nem ad rájuk ajánlatot.',
+      },
+      {
+        title: 'Beszerezhetőség településméret szerint',
+        text: 'Az alábbi alapértékeket a környék mágiája módosítja: szórványos mágia −10, átlagos mágia 0, bőséges mágia +10 százalékpont. A bolt profiljába illő tárgy további +10 százalékpontot kap. A végeredmény legfeljebb 100%; a 0%-os alapérték 0% marad. A d100 dobás akkor sikeres, ha legfeljebb az esély.',
+        table: {
+          headers: ['Településméret', 'Gyakori', 'Nem gyakori', 'Ritka', 'Nagyon ritka', 'Legendás'],
+          rows: [
+            ['Falu (≤1 000 fő)', '90%', '40%', '15%', '0%', '0%'],
+            ['Kisváros (1–10 ezer fő)', '95%', '65%', '25%', '5%', '0%'],
+            ['Város (10–50 ezer fő)', '100%', '80%', '45%', '15%', '2%'],
+            ['Nagyváros (50–200 ezer fő)', '100%', '95%', '65%', '30%', '6%'],
+            ['Metropolisz (200 ezer fő felett)', '100%', '100%', '85%', '45%', '12%'],
+          ],
+        },
+      },
+      {
+        title: 'Beszerzési idő',
+        text: 'Sikeres elérhetőségi próbánál a ritkaság alapján sorsold ki az időt. Ezek játékbeli napok vagy hónapok, nem valódi naptári határidők. A legendás tárgyhoz kapcsolat vagy kaland is szükséges lehet.',
+        table: {
+          headers: ['Gyakoriság', 'Alap idő'],
+          rows: [
+            ['Gyakori', '1d4 nap'],
+            ['Nem gyakori', '1d6+2 nap'],
+            ['Ritka', '2d6+3 nap'],
+            ['Nagyon ritka', '2d10+10 nap'],
+            ['Legendás', '1d4+1 hónap'],
+          ],
+        },
+      },
+      {
+        title: 'Beszerzési felár és ajánlati ár',
+        text: 'Sikeres próba után egy d6 dobás határozza meg a felárat. Az ajánlati ár a tárgy alapárából a bolt árszorzójával számolt ár, erre kerül az alábbi felár. Az ajánlat egyszeri összeg: nem módosítja a saját tárgylista alapárát vagy a bolt tartós tárgyárát.',
+        table: {
+          headers: ['d6', 'Felár', 'Oka'],
+          rows: [
+            ['1', '+0%', 'Meglepően könnyen hozzáférhető'],
+            ['2–3', '+10%', 'Szokásos beszerzési költség'],
+            ['4', '+25%', 'Szállítási nehézségek'],
+            ['5', '+50%', 'Ritka forrás, monopólium vagy vám'],
+            ['6', '+100%', 'Kockázatos kapcsolat vagy feketepiaci útvonal'],
+          ],
+        },
+        note: 'Az ajánlati ár szerkeszthető. Alapár nélküli tárgynál az árat a mesélő adhatja meg.',
+      },
+      {
+        title: 'Megrendelések követése és átvétele',
+        text: 'A Kezelés → Beszerzések az adott bolt próbáit és megrendeléseit őrzi. Egy mentett eredmény lehet függő megrendelés vagy sikertelen próba. A függő megrendelést lemondhatod, vagy a játékbeli idő elteltével Megérkezett állapotba teheted.',
+        steps: ['A megrendelés mentése még nem változtatja meg a készletet.', 'A Megérkezett művelet egy darabot ad a bolt készletéhez, és bekerül a bolt naplójába.', 'A legutóbbi készletművelet visszavonható az Eladásnaplóban. A lemondott és sikertelen próbák megmaradnak a beszerzések között.'],
+      },
+      {
         title: 'Eladásnapló és visszavonás',
         text: 'A Kezelés → Eladásnapló az aktuális bolt eladásait és készletváltozásait mutatja. A legutóbbi visszavonható műveletet az Utolsó művelet visszavonása gombbal állíthatod vissza. A korábbi bejegyzések továbbra is láthatók.',
       },
       {
         title: 'Bolt törlése',
-        text: 'A Kezelés → Bolt törlése a kiválasztott bolt teljes készletét és naplóját törli a jelenleg aktív helyi vagy felhős adatkészletből. A megerősítés előtt ellenőrizd a bolt nevét és az érintett adatok számát. A saját tárgylista és a többi bolt megmarad.',
+        text: 'A Kezelés → Bolt törlése a kiválasztott bolt teljes készletét, beszerzéseit és naplóját törli a jelenleg aktív helyi vagy felhős adatkészletből. A megerősítés előtt ellenőrizd a bolt nevét és az érintett adatok számát. A saját tárgylista és a többi bolt megmarad.',
         note: 'A bolt törlése végleges; az utolsó bolt is törölhető. Ilyenkor új bolt létrehozására hívó üres képernyő jelenik meg.',
       },
     ],

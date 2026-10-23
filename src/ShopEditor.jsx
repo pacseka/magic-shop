@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { CheckCircle, X } from '@phosphor-icons/react';
+import { settlements } from './procurement.js';
 
 export function ShopEditor({ shop, onChange, onSubmit, onClose, editing }) {
   const [section, setSection] = useState('basics');
@@ -27,6 +28,10 @@ export function ShopEditor({ shop, onChange, onSubmit, onClose, editing }) {
         <div className="shop-editor-pair">
           <label>Hely<input value={shop.location} onChange={event => update('location', event.target.value)} placeholder="Város, kerület vagy utca" /></label>
           <label>Tulajdonos<input value={shop.owner} onChange={event => update('owner', event.target.value)} placeholder="Név és megszólítás" /></label>
+        </div>
+        <div className="shop-editor-pair">
+          <label>Településméret<select value={shop.settlementSize || 'city'} onChange={event => update('settlementSize', event.target.value)}>{settlements.map(entry => <option key={entry.id} value={entry.id}>{entry.label}</option>)}</select></label>
+          <label>Környék mágiája<select value={shop.magicPrevalence || 'normal'} onChange={event => update('magicPrevalence', event.target.value)}><option value="scarce">Szórványos</option><option value="normal">Átlagos</option><option value="abundant">Bőséges</option></select></label>
         </div>
         <label>Árszorzó az alapárhoz képest<input type="number" min="0.01" step="0.01" required value={shop.multiplier} onChange={event => update('multiplier', event.target.value)} /><small className="shop-editor-hint">1,25 = 25%-kal drágább · 0,8 = 20%-kal olcsóbb. A tárgyak bolti ára külön is megadható.</small></label>
         <label>Rövid boltleírás<textarea rows="3" value={shop.description} onChange={event => update('description', event.target.value)} placeholder="Milyen hangulatú a bolt? Mit látnak meg először a kalandozók?" /></label>

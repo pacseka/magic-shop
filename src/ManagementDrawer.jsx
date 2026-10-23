@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
-import { BookOpen, Books, CaretRight, ClockCounterClockwise, Cloud, DiceFive, DownloadSimple, GearSix, Plus, Storefront, Trash, UploadSimple, X } from '@phosphor-icons/react';
+import { BookOpen, Books, CaretRight, ClockCounterClockwise, Cloud, DiceFive, DownloadSimple, GearSix, Plus, Storefront, Trash, Truck, UploadSimple, X } from '@phosphor-icons/react';
 import { publicAssetUrl } from './itemTypes.js';
+import { APP_VERSION } from './appVersion.js';
 
 function DrawerAction({ icon: Icon, title, description, onClick, trailing, disabled }) {
   return <button type="button" className="management-action" disabled={disabled} onClick={onClick}>
@@ -48,7 +49,7 @@ export function ManagementDrawer({ open, dialogOpen, onClose, onAction, shop, ca
         <button ref={closeRef} className="management-close" type="button" onClick={onClose} aria-label="Kezelés bezárása"><X size={28} /></button>
         <button className="management-guide" type="button" onClick={() => onAction('guide')}><BookOpen size={18} aria-hidden="true" /> Útmutató</button>
         <h2 id="management-title">Kezelés</h2>
-        <p>A bolt és a készlet kezelése</p>
+        <p>A bolt és a készlet kezelése <span className="management-version">v{APP_VERSION}</span></p>
         <span className="management-rule" aria-hidden="true" />
       </header>
       <div className="management-content">
@@ -56,7 +57,7 @@ export function ManagementDrawer({ open, dialogOpen, onClose, onAction, shop, ca
           <div className="management-group-heading"><Storefront size={28} aria-hidden="true" /><div><h3 id="management-shop-title">Bolt</h3><p>A bolt alapadatai és beállításai.</p></div></div>
           <DrawerAction disabled={!canEdit || !shop} icon={GearSix} title="Bolt szerkesztése" description={shop?.name || 'Előbb hozz létre egy boltot.'} onClick={() => onAction('edit-shop')} />
           <DrawerAction disabled={!canEdit} icon={Plus} title="Új bolt" description="Új kereskedés létrehozása." onClick={() => onAction('new-shop')} />
-          <DrawerAction disabled={!canEdit || !shop} icon={Trash} title="Bolt törlése" description={shop ? `${shop.name} készletének és naplójának törlése.` : 'Nincs törölhető bolt.'} onClick={() => onAction('delete-shop')} />
+          <DrawerAction disabled={!canEdit || !shop} icon={Trash} title="Bolt törlése" description={shop ? `${shop.name} készletének, beszerzéseinek és naplójának törlése.` : 'Nincs törölhető bolt.'} onClick={() => onAction('delete-shop')} />
           {shop && <details className="management-shop-notes"><summary>Bolti tudnivalók</summary><p>{shop.description || 'Még nincs leírás ehhez a bolthoz.'}</p>{[shop.contact && `Kapcsolat: ${shop.contact}`, shop.faction && `Frakció: ${shop.faction}`, shop.relationship && `Viszony: ${shop.relationship}`, shop.adventureHook && `Kalandötlet: ${shop.adventureHook}`].filter(Boolean).map(note => <p key={note}>{note}</p>)}<p>Árszorzó ×{String(shop.multiplier ?? 1).replace('.', ',')}</p></details>}
         </section>
         <section className="management-group" aria-labelledby="management-catalog-title">
@@ -64,6 +65,7 @@ export function ManagementDrawer({ open, dialogOpen, onClose, onAction, shop, ca
           <DrawerAction disabled={!canEdit} icon={Books} title="Saját tárgylista" description={`${catalogCount} tárgy · minden saját boltban használható.`} onClick={() => onAction('catalog')} />
           <DrawerAction disabled={!canEdit || !user} icon={Books} title="SRD alaplista" description={user ? 'Tárgyak másolása a saját listádba.' : 'Bejelentkezés után érhető el.'} onClick={() => onAction('base-catalog')} />
           <DrawerAction disabled={!canEdit || !shop} icon={DiceFive} title="Véletlen készlet" description="A bolt készletének sorsolása." onClick={() => onAction('random')} />
+          <DrawerAction disabled={!canEdit || !shop} icon={Truck} title="Beszerzések" description={`${shop?.procurements?.filter(order => order.status === 'ordered').length ?? 0} függő megrendelés · új ajánlat.`} onClick={() => onAction('procurement')} />
           <DrawerAction disabled={!canEdit || !shop} icon={ClockCounterClockwise} title="Eladásnapló" description="Eladások és készletváltozások." onClick={() => onAction('activity')} />
         </section>
         <section className="management-group" aria-labelledby="management-data-title">
