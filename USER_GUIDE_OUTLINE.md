@@ -22,6 +22,7 @@ Az útmutató elsődleges helye az alkalmazás **Kezelés → Útmutató** felü
 - **Tárgy keresése és kiválasztása:** keresés a bolti készletben, részletek megnyitása; a rögzített alsó sávban a tárgynév a leírást és a hatást is megmutatja.
 - **Eladás rögzítése:** darabszám és alkalmi eladási ár beállítása az alsó sávban, majd eladás. A készlet csökken, az esemény bekerül a bolt naplójába.
 - **Melyik ár mit változtat?** A saját listában lévő alapárra a bolt árszorzója hat. A tárgy bolti árát a részleteknél külön lehet menteni, csak az adott boltban. Az eladáskor átírt ár kizárólag arra az egy eladásra vonatkozik.
+- **Opcionális alku és felvásárlás:** a Kereskedői ajánlat panel két iránya, a D&D 2024 Influence próba hozzáállása, Karizma-készségei és alap DC-je; DC elérése 5%, DC+5 elérése 10%, DC+10 elérése 15%, próba nélküli beleegyezés 5%. A bolt eladásakor kedvezmény, felvásárláskor ajánlatemelés jár. Ezek szerkeszthető háziszabályok. A játékostól átvett tárgy csak az aktuális bolt készletét növeli, a művelet naplózott és visszavonható.
 - **Gyors készletkorrekció:** a kiválasztott tárgy készletszámából nyitható hozzáadás vagy levonás, opcionális megjegyzéssel.
 
 ## 4. Bolt, készlet és beszerzések
@@ -47,6 +48,7 @@ Az útmutató elsődleges helye az alkalmazás **Kezelés → Útmutató** felü
 
 - Miért üres a bolt vagy a tárgylista bejelentkezés után?
 - Miért nem változott a bolti ár az eladáskor megadott összegtől?
+- Hogyan nyitható meg az alku, és hogyan kerül a játékostól vett tárgy a boltba?
 - Hová került az SRD alaplistából átvett tárgy?
 - Hogyan állítható vissza egy téves készletművelet vagy adatmásolás?
 - Mi a teendő, ha a felhőadatok nem tölthetők be?

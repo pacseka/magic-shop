@@ -1,9 +1,27 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { recordBuyback, recordStockChange, undoLatestActivity } from '../src/shopData.js';
+import { bargainSuccessPercent, suggestedBargainPrice } from '../src/bargainingRules.js';
 
 const ring = { id: 'ring', name: 'Ring of Swimming', rarity: 'Nem gyakori', price: 400, kind: 'Gyűrű' };
 const shop = { id: 'shop-one', multiplier: 1.2, items: [], activity: [], procurements: [] };
+
+test('successful checks use inclusive DC, DC+5, and DC+10 thresholds', () => {
+  const results = [14, 15, 19, 20, 24, 25, 30].map(total => bargainSuccessPercent('hesitant', total, 15));
+  assert.deepEqual(results, [0, 5, 5, 10, 10, 15, 15]);
+  assert.equal(bargainSuccessPercent('hesitant', '', 15), 0);
+  assert.equal(bargainSuccessPercent('hesitant', 27, 22), 10);
+  assert.equal(bargainSuccessPercent('willing', '', 15), 5);
+  assert.equal(bargainSuccessPercent('unwilling', 30, 15), 0);
+});
+
+test('the same success margin changes the one-time quote in the right direction', () => {
+  assert.equal(suggestedBargainPrice(200, 5, 'sell'), 190);
+  assert.equal(suggestedBargainPrice(200, 10, 'sell'), 180);
+  assert.equal(suggestedBargainPrice(200, 15, 'sell'), 170);
+  assert.equal(suggestedBargainPrice(200, 5, 'buy'), 210);
+  assert.equal(suggestedBargainPrice('', 10, 'sell'), '');
+});
 
 test('player buyback adds only the purchased shop stock and is undoable', () => {
   const after = recordBuyback(shop, ring, 2, 220, { id: 'buyback-one' });

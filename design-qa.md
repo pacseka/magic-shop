@@ -4,6 +4,7 @@
 
 - Vizuális minta: `C:\Users\Hacsi\.codex\generated_images\01a167fb-e72e-7843-8823-603387f27d0b\exec-9f401579-cf5c-4384-bede-fa62c8e74458.png` (a felhasználó által kiválasztott 2. változat).
 - Implementáció: `C:\Users\Hacsi\.codex\visualizations\2026\10\23\01a167fb-e72e-7843-8823-603387f27d0b\bargaining-tablet-qa.png`; mobil ellenőrzés: `C:\Users\Hacsi\.codex\visualizations\2026\10\23\01a167fb-e72e-7843-8823-603387f27d0b\bargaining-mobile-qa.png`.
+- A befolyásolási mód váltásának javítását 768 × 1024 CSS pixelen a `C:\Users\Hacsi\.codex\visualizations\2026\10\23\01a167fb-e72e-7843-8823-603387f27d0b\bargaining-portrait-fixed.png`, 390 × 844 CSS pixelen a `C:\Users\Hacsi\.codex\visualizations\2026\10\23\01a167fb-e72e-7843-8823-603387f27d0b\bargaining-mobile-fixed.png` rögzíti. Mindkettő 1× böngészőkép.
 - A forrás 1048 × 1496 képpont; az implementáció tablet képe 834 × 1194 képpont, 834 × 1194 CSS pixel nézetben, 1× böngészőképként. A két kép közel azonos képarányú; a teljes nézetet azonos szélességre igazítva hasonlítottam össze.
 - Állapot: nyitott jobb oldali panel, „Bolt vesz” mód, kiválasztott tárgy és fix eladási sáv. A minta és a helyi tesztadat tárgyneve/ára eltér; a szerkezetet, hierarchiát és azonos interakciós állapotot hasonlítottam.
 
@@ -13,12 +14,14 @@
 - Betűk: a címek kontrasztos talpas betűje és a kisebb űrlapszövegek súlya megfelel a meglévő alkalmazásnak és a mintának. A kisebb tablet szélességen a cím alatti magyarázat két sorba kerül; ez olvasható és nem takar kezelőszervet.
 - Térköz és színek: a szakaszvonalak, világos pergamenmezők és bordó elsődleges gombok vizuális ritmusa egyezik. A mintánál alacsonyabb nézetben a szakaszok görgethetők, a rögzítő gombok végig láthatók.
 - Képminőség: a tarsoly díszítő elem külön raszteres, átlátszó hátterű kép. Tablet méretben illeszkedik a minta hangulatához; szűk mobilnézetben el van rejtve, hogy ne ütközzön a címmel. A tárgyképek a meglévő alkalmazás eszközeit használják.
-- Tartalom: az alkalmazás a tényleges helyi katalógust mutatja. A minta játékos-készletet feltételező szövegét pontosítottam, mert az alkalmazás ilyen készletet nem vezet. A mintában látható 20%-os ajánlatemelés helyett a felület egy szerkeszthető, 10%-os opcionális háziszabályt javasol; a D&D 2024 nem határoz meg ehhez kötelező árváltozási százalékot.
+- Tartalom: az alkalmazás a tényleges helyi katalógust mutatja. A minta játékos-készletet feltételező szövegét pontosítottam, mert az alkalmazás ilyen készletet nem vezet. A mintában látható 20%-os ajánlatemelés helyett a felület a felhasználó által választott, szerkeszthető 5/10/15%-os sikerlépcsőket javasolja; a D&D 2024 nem határoz meg ehhez kötelező árváltozási százalékot.
 
 **Összehasonlítás előzménye**
 
 1. Első tablet ellenőrzés: [P2] a hosszú űrlap alján lévő műveletek rövid nézetben nem látszottak. Javítás: a mezők külön görgethetők, a műveleti sor a panel alján marad. Utóellenőrzés: `bargaining-tablet-qa.png`, a gombok és a fix eladási sáv egyidejűleg láthatók.
 2. Első mobil ellenőrzés: [P2] a tarsoly képe a keskeny fejléc szélére szorult. Javítás: a díszítő kép 560 CSS pixel alatt rejtett. Utóellenőrzés: `bargaining-mobile-qa.png`, a cím és a bezárás akadálytalanul olvasható.
+3. Felhasználói reprodukció álló tableten/mobilon: [P1] a Befolyásolás módja választása után a teljes panel elgördült és nagy üres pergamenfelület maradt. A rejtett rádiógomb a panel határain kívülre került, így a böngésző fókuszkor a panelt görgette. Javítás: a rádiógomb pozíciója a saját címkéjéhez kötött, a panel nem görgethető; csak a mezők. Utóellenőrzés: `bargaining-portrait-fixed.png` és `bargaining-mobile-fixed.png`; négy készség között váltva a panel `scrollTop` értéke 0, a műveleti sor a helyén marad.
+4. Új sikerlépcsők: a DC-t pontosan elérő, DC+5 és DC+10 próbák mindkét üzletirányban ellenőrizve. Mobil utóellenőrzés: `C:\Users\Hacsi\.codex\visualizations\2026\10\23\01a167fb-e72e-7843-8823-603387f27d0b\bargaining-success-tiers-mobile.png` (390 × 844 CSS pixel, 1× kép); a 15%-os állapot mellett a panel és a műveleti sor helyben marad.
 
 **Működés és további ellenőrzés**
 

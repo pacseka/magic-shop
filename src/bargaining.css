@@ -1,5 +1,5 @@
 .bargaining-backdrop{bottom:86px;display:block;padding:0;background:#21181170}
-.dialog.bargaining-panel{position:absolute;top:0;right:0;bottom:0;display:flex;flex-direction:column;width:min(50vw,560px);max-height:none;overflow:hidden;padding:0;border:0;border-left:1px solid #9f7b58;border-radius:0;background:#f3ead9 url('/assets/parchment.png') center/900px 900px;box-shadow:-16px 0 36px #21181152;color:#39261e}
+.dialog.bargaining-panel{position:absolute;top:0;right:0;bottom:0;display:flex;flex-direction:column;width:min(50vw,560px);max-height:none;overflow:hidden;overflow:clip;padding:0;border:0;border-left:1px solid #9f7b58;border-radius:0;background:#f3ead9 url('/assets/parchment.png') center/900px 900px;box-shadow:-16px 0 36px #21181152;color:#39261e}
 .bargaining-drawer{display:flex;flex-direction:column;min-height:0;width:100%;height:100%}
 .bargaining-header{position:relative;flex:none;min-height:145px;padding:27px 31px 18px;overflow:hidden;border-bottom:1px solid #b7a68f}
 .bargaining-header>img{position:absolute;right:15px;top:42px;width:140px;height:88px;object-fit:contain;opacity:.9}
@@ -55,11 +55,11 @@
 .bargaining-hint{font-size:12px!important;color:#725f4d!important}
 .bargaining-methods{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:0;padding:0;border:0}
 .bargaining-methods legend{margin-bottom:6px;color:#47362a;font-size:14px;font-weight:700}
-.bargaining-methods label{display:flex;align-items:center;justify-content:center;min-height:42px;padding:6px;border:1px solid #b79c7b;border-radius:5px;background:#fff9ee70;color:#39261e;text-align:center;font-size:12px!important;font-weight:700;cursor:pointer}
+.bargaining-methods label{position:relative;display:flex;align-items:center;justify-content:center;min-height:42px;padding:6px;border:1px solid #b79c7b;border-radius:5px;background:#fff9ee70;color:#39261e;text-align:center;font-size:12px!important;font-weight:700;cursor:pointer}
 .dialog .bargaining-methods label{display:flex;align-items:center;justify-content:center}
 .bargaining-methods label.is-active{border-color:#681f1a;background:#741d1b;color:#fff5e7}
 .bargaining-methods label:focus-within{outline:3px solid #a06937;outline-offset:2px}
-.bargaining-methods input{position:absolute;opacity:0;width:1px;height:1px;min-height:1px}
+.bargaining-methods input{position:absolute;top:50%;left:50%;opacity:0;width:1px;height:1px;min-height:1px;transform:translate(-50%,-50%)}
 .bargaining-roll{width:158px}
 .bargaining-result{padding:9px 11px!important;border:1px solid #bba98d;border-radius:5px;background:#f8f0df}
 .bargaining-result.is-success,.bargaining-stock-note{border-color:#a8c4a1!important;background:#e5f0da!important;color:#35502e!important}

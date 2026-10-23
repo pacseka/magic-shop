@@ -2,6 +2,16 @@
 
 Az alkalmazás verziója a `package.json` fájlban szerepel. A `0.x` változatok fejlesztés alatt állnak: az új funkciók a második, a javítások a harmadik számban jelennek meg; az első szám a későbbi, nem kompatibilis változásokat jelöli.
 
+## 0.3.0 – 2026-10-23
+
+- Az alku sikerlépcsői a DC elérésénél 5%, DC+5-nél 10%, DC+10-nél 15% egyszeri kedvezményt vagy felvásárlási ajánlatemelést javasolnak.
+- A próba nélküli beleegyezés az 5%-os alaplépcsőt használja; az Útmutató az új küszöböket mindkét üzletirányra bemutatja.
+
+## 0.2.1 – 2026-10-23
+
+- Javítja az alku panel elugrását álló tableten és mobilon a befolyásolási mód váltásakor.
+- Az Útmutató külön táblázatban tisztázza a próba kimenetelét és az árjavaslatot, valamint a játékostól felvásárlás lépéseit.
+
 ## 0.2.0 – 2026-10-23
 
 - Opcionális, 2024-es Influence-próbákra épülő alkudozás a bolt eladási árához.

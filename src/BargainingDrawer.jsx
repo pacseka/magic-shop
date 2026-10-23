@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { Coins, MagnifyingGlass, Minus, Plus, Scales, X } from '@phosphor-icons/react';
 import { ItemImage } from './ItemImagePicker.jsx';
 import { publicAssetUrl } from './itemTypes.js';
+import { bargainSuccessPercent, suggestedBargainPrice } from './bargainingRules.js';
 
 const money = value => new Intl.NumberFormat('hu-HU').format(value);
 const methods = [
@@ -33,10 +34,10 @@ export function BargainingDrawer({ shop, catalog, selected, salePrice, onApplySa
   const matches = useMemo(() => catalog.filter(entry => `${entry.name} ${entry.rarity}`.toLocaleLowerCase('hu-HU').includes(search.toLocaleLowerCase('hu-HU'))).slice(0, 6), [catalog, search]);
   const dc = dcOverride ?? Math.max(15, Number(intelligence) || 0);
   const rolled = rollTotal !== '' && Number.isFinite(Number(rollTotal));
-  const success = response === 'willing' || (response === 'hesitant' && rolled && Number(rollTotal) >= Number(dc));
+  const successPercent = bargainSuccessPercent(response, rollTotal, dc);
+  const success = successPercent > 0;
   const failed = response === 'unwilling' || (response === 'hesitant' && rolled && !success);
-  const opening = Number(openingOffer);
-  const suggested = validPrice(openingOffer) ? Math.max(0, Math.round(opening * (success ? mode === 'sell' ? .9 : 1.1 : 1))) : '';
+  const suggested = suggestedBargainPrice(openingOffer, successPercent, mode);
   const finalPrice = finalOverride ?? suggested;
   const canAccept = Boolean(item) && validPrice(openingOffer) && validPrice(finalPrice) && Number.isInteger(Number(finalPrice)) && (mode === 'buy' || selected?.stock > 0);
 
@@ -61,7 +62,7 @@ export function BargainingDrawer({ shop, catalog, selected, salePrice, onApplySa
     const negotiation = {
       method, attitude, response, intelligence: Number(intelligence), dc: Number(dc),
       rollTotal: rolled ? Number(rollTotal) : null, result: success ? 'success' : failed ? 'failure' : 'unrolled',
-      openingOffer: Number(openingOffer), finalOffer: Number(finalPrice),
+      openingOffer: Number(openingOffer), finalOffer: Number(finalPrice), suggestedPercent: successPercent,
     };
     if (mode === 'sell') {
       onApplySale(Number(finalPrice), negotiation);
@@ -98,7 +99,7 @@ export function BargainingDrawer({ shop, catalog, selected, salePrice, onApplySa
       <section className="bargaining-section" aria-labelledby="bargain-value-title">
         <h3 id="bargain-value-title">2. Érték és ajánlat</h3>
         <div className="bargaining-value"><span>{mode === 'buy' ? 'Katalógus alapértéke' : 'Bolti ár'}</span><strong>{mode === 'buy' ? item?.price == null ? 'Felbecsülhetetlen' : `${money(item.price)} gp` : `${money(selected ? salePrice : 0)} gp`}</strong></div>
-        <p className="bargaining-house-rule"><Coins size={21} aria-hidden="true" /><span><strong>Opcionális háziszabály.</strong> {mode === 'buy' ? 'Kezdő felvásárlási ajánlat: a katalógusérték 50%-a.' : 'Sikeres alku esetén javasolt 10% kedvezmény.'}</span></p>
+        <p className="bargaining-house-rule"><Coins size={21} aria-hidden="true" /><span><strong>Opcionális háziszabály.</strong> {mode === 'buy' ? 'Kezdő felvásárlási ajánlat: a katalógusérték 50%-a; sikerre 5/10/15% emelés.' : 'Sikeres alku esetén 5/10/15% kedvezmény a siker mértéke szerint.'}</span></p>
         <label className="bargaining-inline">{mode === 'buy' ? 'Kezdő felvásárlási ajánlat' : 'Kiinduló eladási ár'} <span className="bargaining-price"><input type="number" min="0" step="1" value={openingOffer} onChange={event => { setOpeningOffer(event.target.value); setFinalOverride(null); }} aria-label="Kiinduló ajánlat aranyban" /> gp</span></label>
       </section>
 
@@ -109,10 +110,10 @@ export function BargainingDrawer({ shop, catalog, selected, salePrice, onApplySa
         <p className="bargaining-hint">Alap DC: 15 vagy a kereskedő INT-je, amelyik magasabb. A mesélő átírhatja.</p>
         <fieldset className="bargaining-methods"><legend>Befolyásolás módja</legend>{methods.map(([key, label]) => <label key={key} className={method === key ? 'is-active' : ''}><input type="radio" name="bargain-method" value={key} checked={method === key} onChange={() => setMethod(key)} />Karizma ({label})</label>)}</fieldset>
         {response === 'hesitant' && <label className="bargaining-inline">Próba összesen<input className="bargaining-roll" type="number" step="1" value={rollTotal} onChange={event => { setRollTotal(event.target.value); setFinalOverride(null); }} placeholder="d20 + módosítók" /></label>}
-        <p className={`bargaining-result ${success ? 'is-success' : failed ? 'is-failure' : ''}`} role="status">{success ? 'Sikeres befolyásolás · az új ajánlat alkalmazható.' : failed ? 'Nincs alku. Ugyanígy 24 óra múlva próbálható újra, vagy a mesélő döntése szerint.' : 'A próba eredménye nélkül a kiinduló ajánlat marad.'}</p>
+        <p className={`bargaining-result ${success ? 'is-success' : failed ? 'is-failure' : ''}`} role="status">{success ? `${response === 'willing' ? 'Próba nélküli beleegyezés' : `Sikeres próba · DC${Number(rollTotal) > Number(dc) ? `+${Number(rollTotal) - Number(dc)}` : ''}`} · ${successPercent}% ${mode === 'sell' ? 'kedvezmény' : 'ajánlatemelés'} javasolt.` : failed ? 'Nincs alku. Ugyanígy 24 óra múlva próbálható újra, vagy a mesélő döntése szerint.' : 'A próba eredménye nélkül a kiinduló ajánlat marad.'}</p>
       </section>
 
-      <section className="bargaining-section bargaining-final" aria-labelledby="bargain-final-title"><h3 id="bargain-final-title">4. Végső ajánlat</h3><p>{mode === 'buy' ? 'Sikeres próbára javasolt +10% a kezdő felvásárlási ajánlatból.' : 'Sikeres próbára javasolt −10% a kiinduló eladási árból.'} Az összeg szabadon átírható.</p><label className="bargaining-inline">Egységár <span className="bargaining-price"><input type="number" min="0" step="1" value={finalPrice} onChange={event => setFinalOverride(event.target.value)} aria-label="Végső ajánlat aranyban" /> gp</span></label>{mode === 'buy' && <p className="bargaining-stock-note"><Plus size={18} aria-hidden="true" /> A felvásárlás {quantity || 0} darabot ad ehhez a bolt készletéhez, és naplózható, visszavonható.</p>}</section>
+      <section className="bargaining-section bargaining-final" aria-labelledby="bargain-final-title"><h3 id="bargain-final-title">4. Végső ajánlat</h3><p>DC elérése: {mode === 'sell' ? '−' : '+'}5%, DC+5: {mode === 'sell' ? '−' : '+'}10%, DC+10: {mode === 'sell' ? '−' : '+'}15%. Próba nélküli beleegyezés: 5%. A végső összeg szabadon átírható.</p><label className="bargaining-inline">Egységár <span className="bargaining-price"><input type="number" min="0" step="1" value={finalPrice} onChange={event => setFinalOverride(event.target.value)} aria-label="Végső ajánlat aranyban" /> gp</span></label>{mode === 'buy' && <p className="bargaining-stock-note"><Plus size={18} aria-hidden="true" /> A felvásárlás {quantity || 0} darabot ad ehhez a bolt készletéhez, és naplózható, visszavonható.</p>}</section>
       {error && <p className="bargaining-error" role="alert">{error}</p>}
       </div>
       <div className="bargaining-actions"><button type="button" className="button button-secondary" onClick={onClose}>Mégse</button><button type="submit" className="button button-primary" disabled={!canAccept || (mode === 'buy' && (!Number.isInteger(Number(quantity)) || Number(quantity) < 1))}><Scales size={19} />{mode === 'buy' ? `Felvásárlás rögzítése · ${money(Number(finalPrice || 0) * Number(quantity || 0))} gp` : `Ár átvétele · ${money(Number(finalPrice || 0))} gp`}</button></div>
