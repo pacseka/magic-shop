@@ -37,14 +37,26 @@ export function removeShop(ledger, shopId) {
   return { ...ledger, shops: ledger.shops.filter(shop => shop.id !== shopId) };
 }
 
-export function recordStockChange(shop, { id = makeId(), at = new Date().toISOString(), type, itemId, delta, unitPrice, reason = '' }) {
+export function recordStockChange(shop, { id = makeId(), at = new Date().toISOString(), type, itemId, delta, unitPrice, reason = '', negotiation = null }) {
   const item = shop.items.find(entry => entry.id === itemId);
   if (!item || !['sale', 'adjustment'].includes(type) || !Number.isInteger(delta) || delta === 0 || (type === 'sale' && delta > 0)) return null;
   const after = item.stock + delta;
   if (after < 0 || (type === 'sale' && (!Number.isFinite(unitPrice) || unitPrice < 0))) return null;
   const change = { itemId, itemName: item.name, before: item.stock, after };
-  const activity = { id, at, type, changes: [change], ...(type === 'sale' ? { unitPrice, totalPrice: -delta * unitPrice } : { reason: reason.trim() }) };
+  const activity = { id, at, type, changes: [change], ...(type === 'sale' ? { unitPrice, totalPrice: -delta * unitPrice, ...(negotiation ? { negotiation } : {}) } : { reason: reason.trim() }) };
   return { ...shop, items: shop.items.map(entry => entry.id === itemId ? { ...entry, stock: after } : entry), activity: [...(shop.activity ?? []), activity] };
+}
+
+export function recordBuyback(shop, catalogItem, quantity, unitPrice, { id = makeId(), at = new Date().toISOString(), negotiation = null } = {}) {
+  if (!catalogItem?.id || !Number.isInteger(quantity) || quantity < 1 || !Number.isFinite(unitPrice) || unitPrice < 0) return null;
+  const existing = shop.items.find(item => item.catalogId === catalogItem.id);
+  const item = existing ?? shopItemFromCatalog(catalogItem, 0);
+  const change = { itemId: item.id, itemName: item.name, before: existing?.stock ?? 0, after: (existing?.stock ?? 0) + quantity, ...(!existing ? { created: true } : {}) };
+  return {
+    ...shop,
+    items: existing ? shop.items.map(entry => entry.id === existing.id ? { ...entry, stock: change.after } : entry) : [...shop.items, { ...item, stock: quantity }],
+    activity: [...(shop.activity ?? []), { id, at, type: 'buyback', changes: [change], unitPrice, totalPrice: unitPrice * quantity, ...(negotiation ? { negotiation } : {}) }],
+  };
 }
 
 export function recordRandomStock(shop, rolled, { id = makeId(), at = new Date().toISOString() } = {}) {

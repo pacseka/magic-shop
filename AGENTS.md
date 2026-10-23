@@ -52,4 +52,6 @@ Before making substantial visual changes, use the Product Design plugin's `get-c
 
 When implementing from a selected generated mock, treat that image as the source of truth for layout, component anatomy, density, spacing, color, typography, visible content, and hierarchy.
 
+The 2026-10-23 bargaining design choice is the second generated direction: a right-side parchment “Kereskedői ajánlat” panel over the inventory, with the fixed sale bar still visible. Make bargaining optional for a shop sale and support a player offering an item to the shop. Use D&D 2024 Influence checks, skills, attitude, and default DC; label any percentage price change or suggested buyback percentage as an editable house rule. The app does not track player inventory. A completed buyback adds stock to the current shop and is journaled and undoable; neither direction changes catalog base prices or persistent shop prices.
+
 Build app UI in `src/`. Keep `.openai/hosting.json`, `worker/index.js`, `scripts/prepare-sites-build.mjs`, and `tests/sites-worker.test.mjs` intact so the same local app can be handed to Sites. Before a Sites handoff, run `npm run build` and `npm run test:sites`; the build must leave `dist/client/index.html`, `dist/server/index.js`, and `dist/.openai/hosting.json`.

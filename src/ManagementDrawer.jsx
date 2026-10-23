@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { BookOpen, Books, CaretRight, ClockCounterClockwise, Cloud, DiceFive, DownloadSimple, GearSix, Plus, Storefront, Trash, Truck, UploadSimple, X } from '@phosphor-icons/react';
+import { BookOpen, Books, CaretRight, ClockCounterClockwise, Cloud, DiceFive, DownloadSimple, GearSix, Plus, Scales, Storefront, Trash, Truck, UploadSimple, X } from '@phosphor-icons/react';
 import { publicAssetUrl } from './itemTypes.js';
 import { APP_VERSION } from './appVersion.js';
 
@@ -66,6 +66,7 @@ export function ManagementDrawer({ open, dialogOpen, onClose, onAction, shop, ca
           <DrawerAction disabled={!canEdit || !user} icon={Books} title="SRD alaplista" description={user ? 'Tárgyak másolása a saját listádba.' : 'Bejelentkezés után érhető el.'} onClick={() => onAction('base-catalog')} />
           <DrawerAction disabled={!canEdit || !shop} icon={DiceFive} title="Véletlen készlet" description="A bolt készletének sorsolása." onClick={() => onAction('random')} />
           <DrawerAction disabled={!canEdit || !shop} icon={Truck} title="Beszerzések" description={`${shop?.procurements?.filter(order => order.status === 'ordered').length ?? 0} függő megrendelés · új ajánlat.`} onClick={() => onAction('procurement')} />
+          <DrawerAction disabled={!canEdit || !shop} icon={Scales} title="Alku és felvásárlás" description="Egyszeri áralku vagy játékostól vásárlás." onClick={() => onAction('bargain')} />
           <DrawerAction disabled={!canEdit || !shop} icon={ClockCounterClockwise} title="Eladásnapló" description="Eladások és készletváltozások." onClick={() => onAction('activity')} />
         </section>
         <section className="management-group" aria-labelledby="management-data-title">

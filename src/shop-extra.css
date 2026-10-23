@@ -65,6 +65,11 @@
 .quick-stepper button:disabled{opacity:.35}
 .quick-stepper output{min-width:22px;text-align:center;font-size:19px}
 .quick-sale>.button{height:43px;min-height:43px;padding:0 16px;font-size:16px}
+.quick-bargain-button{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:43px;padding:0 11px;border:1px solid #8e4c3c;border-radius:5px;background:#f8eedc;color:#681f1a;font:700 14px Georgia,serif;white-space:nowrap}
+.quick-bargain-button:hover{background:#fff7e8}
+.bargain-short{display:none}
+@media(max-width:1050px){.bargain-long{display:none}.bargain-short{display:inline}}
+@media(max-width:560px){.quick-bargain-button{flex:1;min-height:43px;font-size:13px}}
 .selected-description{position:absolute;right:0;bottom:calc(100% - 1px);left:0;max-height:min(55vh,370px);overflow:auto;padding:18px 34px;border:1px solid #a88969;border-bottom:0;background:#f3ead9 url('/assets/parchment.png') center/900px 900px;box-shadow:0 -12px 24px #49351c25;color:#3e332b}
 .selected-description[hidden]{display:none}
 .selected-description>div{display:flex;justify-content:space-between;align-items:center;margin-bottom:11px}

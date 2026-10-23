@@ -8,6 +8,7 @@ import "./shop-editor.css";
 import "./management-drawer.css";
 import "./user-guide.css";
 import "./procurement.css";
+import "./bargaining.css";
 
 async function start() {
   const seedItems = import.meta.env.DEV

@@ -72,6 +72,18 @@ export const guideSections = [
         note: 'Az alsó eladási sávban átírt ár csak az éppen rögzített eladásra vonatkozik: nem változtatja meg sem a bolti árat, sem a saját tárgylista alapárát.',
       },
       {
+        title: 'Opcionális alkudozás',
+        text: 'A kiválasztott tárgy alsó sávjában az Alku gombbal nyisd meg a jobb oldali Kereskedői ajánlat panelt. A Bolt elad mód a játékos vásárlásához ad egyszeri árat; az Ár átvétele csak az alsó eladási sáv árát állítja át. Az Eladás gombbal rögzíted a készletcsökkenést. A panel nélkül a szokásos eladás változatlanul működik.',
+        steps: ['A mesélő döntse el, hogy a kereskedő készséges, habozik vagy elutasítja a kérést. Készséges vagy elutasító kereskedőnél nincs próba.', 'Habozásnál a játékos megközelítéséhez illő Karizma (Rábeszélés, Megtévesztés, Megfélemlítés vagy Előadás) próbát kérj. Az alap DC a 15 és a kereskedő Intelligencia-értéke közül a magasabb; a mesélő módosíthatja.', 'Barátságos kereskedőnél előnnyel, ellenségesnél hátránnyal dobnak. A dobás összesített eredményét írd be; ha legalább a DC, a próba sikeres. Sikertelen próbánál ugyanígy 24 óra, vagy a mesélő által meghatározott idő után kérhetnek újra.'],
+        note: 'A próbák, hozzáállás és DC a D&D 2024 Influence szabályát követik. A sikeres alku után javasolt 10% kedvezmény saját, opcionális háziszabály, nem hivatalos D&D ártábla. A végső összeget a mesélő átírhatja; az alkalmi ár nem változtatja meg a tartós bolti árat vagy a katalógus alapárát.',
+      },
+      {
+        title: 'Tárgy felvásárlása a játékostól',
+        text: 'A Kereskedői ajánlat Bolt vesz módjában válaszd ki a felajánlott tárgyat a saját tárgylistából. Ez nem játékos-készlet: az alkalmazás csak a boltban átvett darabszámot követi. Ha a tárgy hiányzik, előbb hozd létre a saját tárgylistában.',
+        steps: ['A katalógus alapértékének 50%-a egy szerkeszthető kiinduló felvásárlási ajánlat. Artefaktumnál a mesélő adja meg az összeget.', 'Az Influence próba ugyanúgy működik, mint a játékos vásárlásánál. Sikerre a panel 10%-kal magasabb felvásárlási ajánlatot javasol; a végső egységár szabadon átírható.', 'A Felvásárlás rögzítése hozzáadja a darabokat csak az aktuális bolt készletéhez, és a kifizetést a bolt naplójába írja. A legutóbbi készletművelet visszavonható.'],
+        note: 'Az 50%-os felvásárlási alap és a 10%-os alkuhatás opcionális háziszabály varázstárgyakhoz. A D&D 2024 féláras szabálya felszerelésre vonatkozik; a varázstárgyaknál a ritkasági érték irányadó, a tényleges üzletet a mesélő dönti el. A felvásárlási ár nem módosítja a katalógus alapárát vagy a bolti árat.',
+      },
+      {
         title: 'Készlet hozzáadása vagy levonása',
         text: 'A kiválasztott tárgy készletszámára koppintva nyisd meg a Készlet módosítása ablakot. Válassz hozzáadást vagy levonást, add meg a mennyiséget, és szükség esetén írj megjegyzést. A változás bekerül az adott bolt naplójába.',
       },

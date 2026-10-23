@@ -6,6 +6,7 @@ function activityTitle(event) {
   const change = event.changes[0];
   if (event.type === 'removal') return `Eltávolítás a boltból · ${change.itemName}`;
   if (event.type === 'procurement') return `Beszerzés megérkezett · ${change.itemName}`;
+  if (event.type === 'buyback') return `Felvásárlás játékostól · ${change.itemName}`;
   return `${event.type === 'sale' ? 'Eladás' : 'Készletkorrekció'} · ${change.itemName}`;
 }
 
@@ -15,7 +16,8 @@ function activityDetail(event) {
   if (event.type === 'removal') return `${change.before} db kivéve a kínálatból · a közös tárgylistában megmaradt`;
   if (event.type === 'procurement') return `${signed(change.after - change.before)} db · a megrendelés megérkezett`;
   const quantity = `${signed(change.after - change.before)} db`;
-  if (event.type === 'sale') return `${quantity} · ${money(event.unitPrice)} gp/db · összesen ${money(event.totalPrice)} gp`;
+  if (event.type === 'sale') return `${quantity} · ${money(event.unitPrice)} gp/db · összesen ${money(event.totalPrice)} gp${event.negotiation ? ' · alkuval' : ''}`;
+  if (event.type === 'buyback') return `${quantity} · ${money(event.unitPrice)} gp/db · összesen ${money(event.totalPrice)} gp kifizetve${event.negotiation ? ' · alkuval' : ''}`;
   return `${quantity}${event.reason ? ` · ${event.reason}` : ''}`;
 }
 

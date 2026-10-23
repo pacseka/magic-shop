@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { MagnifyingGlass, Plus, Package, CaretRight, CaretUp, CaretDown, Minus, Coins, X, CheckCircle, Storefront, GearSix, DiceFive, PencilSimple, Trash } from '@phosphor-icons/react';
-import { activeShopKey, blankShop, canUndoLatestActivity, generateStock, makeId, rarities, recordItemRemoval, recordRandomStock, recordStockChange, removeShop, salePriceFor, shopItemFromCatalog, undoLatestActivity } from './shopData.js';
+import { MagnifyingGlass, Plus, Package, CaretRight, CaretUp, CaretDown, Minus, Coins, Scales, X, CheckCircle, Storefront, GearSix, DiceFive, PencilSimple, Trash } from '@phosphor-icons/react';
+import { activeShopKey, blankShop, canUndoLatestActivity, generateStock, makeId, rarities, recordBuyback, recordItemRemoval, recordRandomStock, recordStockChange, removeShop, salePriceFor, shopItemFromCatalog, undoLatestActivity } from './shopData.js';
 import { firebaseReady, signIn, signOutUser } from './firebase.js';
 import { useLedgerSession } from './useLedgerSession.js';
 import { ItemImage } from './ItemImagePicker.jsx';
@@ -17,6 +17,7 @@ import { UserGuide } from './UserGuide.jsx';
 import { copyBaseItems } from './baseCatalogData.js';
 import { ProcurementDialog } from './ProcurementDialog.jsx';
 import { cancelProcurement, receiveProcurement, saveProcurement } from './procurement.js';
+import { BargainingDrawer } from './BargainingDrawer.jsx';
 
 const money = value => new Intl.NumberFormat('hu-HU').format(value);
 const rarityClass = text => `rarity-${text.toLocaleLowerCase('hu-HU').replaceAll(' ', '-')}`;
@@ -47,6 +48,7 @@ export function App({ seedItems = [] }) {
   const [search, setSearch] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [salePrice, setSalePrice] = useState(400);
+  const [saleNegotiation, setSaleNegotiation] = useState(null);
   const [shopPriceDraft, setShopPriceDraft] = useState(400);
   const [showSelectedDescription, setShowSelectedDescription] = useState(false);
   const [dialog, setDialog] = useState(null);
@@ -57,6 +59,7 @@ export function App({ seedItems = [] }) {
   const managementButtonRef = useRef(null);
   const dialogReturnFocusRef = useRef(null);
   const previousDialogRef = useRef(null);
+  const bargainTriggerRef = useRef(null);
   const [toast, setToast] = useState('');
   const [draft, setDraft] = useState(blankShop);
   const [editingId, setEditingId] = useState(null);
@@ -85,7 +88,7 @@ export function App({ seedItems = [] }) {
   const filtered = useMemo(() => items.filter(item => `${item.name} ${item.rarity}`.toLocaleLowerCase('hu-HU').includes(search.toLocaleLowerCase('hu-HU'))), [items, search]);
 
   useEffect(() => { localStorage.setItem(activeShopKey, shop?.id ?? ''); }, [shop?.id]);
-  useEffect(() => { setSalePrice(suggestedSalePrice(selected, shop)); setShopPriceDraft(suggestedSalePrice(selected, shop)); setQuantity(1); setShowSelectedDescription(false); }, [selected?.id, selected?.price, selected?.shopPrice, shop?.id, shop?.multiplier]);
+  useEffect(() => { setSalePrice(suggestedSalePrice(selected, shop)); setSaleNegotiation(null); setShopPriceDraft(suggestedSalePrice(selected, shop)); setQuantity(1); setShowSelectedDescription(false); }, [selected?.id, selected?.price, selected?.shopPrice, shop?.id, shop?.multiplier]);
   useEffect(() => { if (!toast) return; const timer = setTimeout(() => setToast(''), typeof toast === 'object' ? 8000 : 3600); return () => clearTimeout(timer); }, [toast]);
   useEffect(() => {
     if (!dialog) return undefined;
@@ -140,7 +143,7 @@ export function App({ seedItems = [] }) {
     setLedger(current => ({ ...current, shops: current.shops.map(entry => entry.id === shop.id ? updater(entry) : entry) }));
   }
   function updateItems(updater) { updateShop(entry => ({ ...entry, items: updater(entry.items ?? []) })); }
-  function selectItem(item) { setSelectedId(item.id); setSalePrice(suggestedSalePrice(item, shop)); setShopPriceDraft(suggestedSalePrice(item, shop)); setQuantity(1); setShowSelectedDescription(false); }
+  function selectItem(item) { setSelectedId(item.id); setSalePrice(suggestedSalePrice(item, shop)); setSaleNegotiation(null); setShopPriceDraft(suggestedSalePrice(item, shop)); setQuantity(1); setShowSelectedDescription(false); }
   function saveShopPrice(event) {
     event.preventDefault();
     const price = Number(shopPriceDraft);
@@ -155,6 +158,7 @@ export function App({ seedItems = [] }) {
   function changeSalePriceBy(delta) {
     const next = Math.max(0, (Number(salePrice) || 0) + delta);
     setSalePrice(next);
+    setSaleNegotiation(null);
   }
   function resetShopPrice() {
     updateItems(current => current.map(item => item.id === selected.id ? { ...item, shopPrice: null } : item));
@@ -164,10 +168,39 @@ export function App({ seedItems = [] }) {
     const price = Number(salePrice);
     if (!selected || selected.stock < quantity || quantity < 1 || !Number.isFinite(price) || price < 0) return;
     const activityId = makeId();
-    updateShop(entry => recordStockChange(entry, { id: activityId, type: 'sale', itemId: selected.id, delta: -quantity, unitPrice: price }) ?? entry);
+    updateShop(entry => recordStockChange(entry, { id: activityId, type: 'sale', itemId: selected.id, delta: -quantity, unitPrice: price, negotiation: saleNegotiation }) ?? entry);
     setToast({ message: `${quantity} × ${selected.name} eladva · ${money(price * quantity)} gp`, undoId: activityId });
     setQuantity(1);
     setSalePrice(suggestedSalePrice(selected, shop));
+    setSaleNegotiation(null);
+  }
+  function openBargaining(event) {
+    bargainTriggerRef.current = event?.currentTarget ?? null;
+    setDialog('bargain');
+  }
+  function applyBargainedSale(price, negotiation) {
+    setSalePrice(price);
+    setSaleNegotiation(negotiation);
+    setDialog(null);
+    setToast(`Alkalmi eladási ár: ${money(price)} gp. Az Eladás gombbal rögzítheted.`);
+    if (!managementOpen) requestAnimationFrame(() => bargainTriggerRef.current?.focus());
+  }
+  function buyFromPlayer(item, amount, price, negotiation) {
+    if (!shop || !catalog.some(entry => entry.id === item?.id)) return false;
+    const activityId = makeId();
+    const current = dataSession.getSnapshot().ledger;
+    const target = current.shops.find(entry => entry.id === shop.id);
+    const updated = target && recordBuyback(target, item, amount, price, { id: activityId, negotiation });
+    if (!updated) return false;
+    const next = { ...current, shops: current.shops.map(entry => entry.id === target.id ? updated : entry) };
+    setLedger(next);
+    if (dataSession.getSnapshot().ledger !== next) return false;
+    const acquired = updated.items.find(entry => entry.catalogId === item.id);
+    setSelectedId(acquired?.id ?? '');
+    setSearch('');
+    setDialog(null);
+    setToast({ message: `${amount} × ${item.name} felvásárolva · ${money(amount * price)} gp`, undoId: activityId });
+    return true;
   }
   function addItem(event) {
     event.preventDefault();
@@ -322,7 +355,11 @@ export function App({ seedItems = [] }) {
   function closeDialog() {
     if (dialog === 'remove') cancelRemoval();
     else if (dialog === 'delete-shop') cancelShopDeletion();
-    else setDialog(null);
+    else {
+      const wasBargaining = dialog === 'bargain';
+      setDialog(null);
+      if (wasBargaining && !managementOpen) requestAnimationFrame(() => bargainTriggerRef.current?.focus());
+    }
   }
   function deleteShop() {
     if (!removalShop || !dataReady || dataBusy) return;
@@ -414,6 +451,7 @@ export function App({ seedItems = [] }) {
     else if (action === 'random') openRandomDialog();
     else if (action === 'activity') setDialog('activity');
     else if (action === 'procurement') openProcurement();
+    else if (action === 'bargain') openBargaining();
     else if (action === 'import') setDialog('import');
     else if (action === 'cloud') setDialog('cloud');
     else if (action === 'guide') setDialog('guide');
@@ -429,13 +467,14 @@ export function App({ seedItems = [] }) {
     <section className="shop-notes" aria-label="Bolti tudnivalók"><div><strong>{shop?.description || 'Még nincs leírás ehhez a bolthoz.'}</strong><span>{[shop?.contact && `Kapcsolat: ${shop.contact}`, shop?.faction && `Frakció: ${shop.faction}`, shop?.relationship && `Viszony: ${shop.relationship}`, shop?.adventureHook && `Kalandötlet: ${shop.adventureHook}`].filter(Boolean).join(' · ')}</span></div><span className="multiplier-badge">Árszorzó ×{String(shop?.multiplier ?? 1).replace('.', ',')}</span></section>
     <section className="toolbar" aria-label="Bolti műveletek"><label className="search-field"><MagnifyingGlass size={26} aria-hidden="true" /><input aria-label="Keresés a tárgyak között" value={search} onChange={event => setSearch(event.target.value)} placeholder="Keresés a tárgyak között..." /></label><button className="button button-primary add-button" onClick={() => { setCatalogSearch(''); setCatalogDraft(null); setDialog('catalog'); }}><Plus size={23} /><span className="add-label-long">Tárgy hozzáadása</span><span className="add-label-short">Tárgy</span></button></section>
     <section className="inventory" aria-label="Bolti készlet"><div className="inventory-head"><span>Név</span><span>Ritkaság</span><span>Készlet</span><span>Bolti ár (gp)</span><span /></div><div className="inventory-list">{filtered.length ? filtered.map(item => <button key={item.id} className={`inventory-row ${item.id === selected?.id ? 'is-selected' : ''}`} onClick={() => selectItem(item)} aria-pressed={item.id === selected?.id}><span className="item-main"><span className="item-thumb"><ItemImage item={item} alt="" /></span><span className="item-words"><strong>{item.name}</strong><small>{item.teaser}</small></span></span><span className={`rarity ${rarityClass(item.rarity)}`}>{item.rarity}</span><span className="stock-value">{item.stock}</span><span className="price-value">{item.rarity === 'Artefaktum' && item.price == null && item.shopPrice == null ? 'Felbecsülhetetlen' : `${money(salePriceFor(item, shop))} gp`}</span><CaretRight className="row-caret" size={19} aria-hidden="true" /></button>) : <div className="empty-results"><p>{items.length ? 'Nincs találat a bolt készletében.' : 'Ebben a boltban még nincs tárgy.'}</p><button type="button" className="button button-secondary" onClick={() => openProcurement('new', search)}>Beszerzés ellenőrzése</button></div>}</div></section>
-    {selected && <section className="detail" aria-label={`${selected.name} részletei`}><div className="detail-rule" aria-hidden="true"><span>◇</span></div><div className="detail-content"><div className="detail-illustration"><ItemImage item={selected} alt={selected.name} /></div><div className="detail-info"><h2>{selected.name}</h2><div className="detail-tags"><span className={`rarity ${rarityClass(selected.rarity)}`}>{selected.rarity}</span><span>{normalizedItemKind(selected)}</span>{selected.category && selected.category !== normalizedItemKind(selected) && <span>{selected.category}</span>}</div><p className="detail-description">{selected.description}</p><h3>Hatás</h3><p className="detail-effect">{selected.effect}</p><p className="base-price">Alapár: {selected.rarity === 'Artefaktum' && selected.price == null ? 'felbecsülhetetlen' : `${money(selected.price)} gp`} · bolti szorzó: ×{String(shop.multiplier).replace('.', ',')}</p><button type="button" className="remove-shop-item" onClick={openRemoval}><Trash size={18} aria-hidden="true" /> Eltávolítás a boltból</button><ShopPriceEditor item={selected} shop={shop} value={shopPriceDraft} onChange={setShopPriceDraft} onSave={saveShopPrice} onReset={resetShopPrice} /><div className="purchase-controls"><div className="quantity-wrap"><label>Mennyiség</label><div className="stepper"><button aria-label="Mennyiség csökkentése" onClick={() => setQuantity(q => Math.max(1, q - 1))} disabled={quantity <= 1}><Minus size={18} /></button><output>{selected.stock ? quantity : 0}</output><button aria-label="Mennyiség növelése" onClick={() => setQuantity(q => Math.min(selected.stock, q + 1))} disabled={quantity >= selected.stock}><Plus size={18} /></button></div></div><div className="price-wrap"><label htmlFor="sale-price">Eladási ár (gp)</label><div className="price-input"><Coins size={22} aria-hidden="true" /><input id="sale-price" type="number" min="0" step="1" value={salePrice} onChange={event => setSalePrice(event.target.value)} /><span className="price-arrows"><button aria-label="Ár növelése 50 arannyal" onClick={() => changeSalePriceBy(50)}><CaretUp size={14} /></button><button aria-label="Ár csökkentése 50 arannyal" onClick={() => changeSalePriceBy(-50)}><CaretDown size={14} /></button></span></div></div></div><button className="button button-primary sell-button" onClick={sell} disabled={selected.stock < quantity || selected.stock === 0 || salePrice === '' || Number(salePrice) < 0}><Coins size={25} /><span>{selected.stock ? 'Eladás' : 'Elfogyott'}</span><strong>{selected.stock && salePrice !== '' ? `${money((Number(salePrice) || 0) * quantity)} gp` : ''}</strong></button></div></div></section>}
-    {selected && <section className="quick-sale" aria-label="Gyors eladás" inert={managementOpen || ['remove', 'delete-shop'].includes(dialog)}><button className="quick-sale-name" type="button" aria-expanded={showSelectedDescription} aria-controls="selected-description" onClick={() => setShowSelectedDescription(open => !open)}><small>Kiválasztott tárgy · leírás</small><strong>{selected.name}</strong></button><button className="quick-stock-button" type="button" onClick={() => openAdjustDialog(selected.id)} aria-label={`${selected.name} készletének módosítása, jelenleg ${selected.stock} darab`}><Package size={17} /> {selected.stock} db</button><label>Db<div className="quick-stepper"><button aria-label="Gyors mennyiség csökkentése" disabled={quantity <= 1} onClick={() => setQuantity(q => Math.max(1, q - 1))}><Minus size={16} /></button><output>{selected.stock ? quantity : 0}</output><button aria-label="Gyors mennyiség növelése" disabled={quantity >= selected.stock} onClick={() => setQuantity(q => Math.min(selected.stock, q + 1))}><Plus size={16} /></button></div></label><label>Eladási ár (gp)<input aria-label="Alkalmi eladási ár" type="number" min="0" step="1" value={salePrice} onChange={event => setSalePrice(event.target.value)} /></label><button className="button button-primary" disabled={selected.stock < quantity || selected.stock === 0 || salePrice === '' || Number(salePrice) < 0} onClick={sell}><Coins size={18} /> {selected.stock ? 'Eladás' : 'Elfogyott'}</button><div id="selected-description" className="selected-description" hidden={!showSelectedDescription}><div><span className={`rarity ${rarityClass(selected.rarity)}`}>{selected.rarity}</span><button type="button" aria-label="Leírás bezárása" onClick={() => setShowSelectedDescription(false)}><X size={18} /></button></div><p>{selected.description}</p><strong>Hatás</strong><p>{selected.effect}</p><button type="button" className="remove-shop-item" onClick={openRemoval}><Trash size={18} aria-hidden="true" /> Eltávolítás a boltból</button></div></section>}
+    {selected && <section className="detail" aria-label={`${selected.name} részletei`}><div className="detail-rule" aria-hidden="true"><span>◇</span></div><div className="detail-content"><div className="detail-illustration"><ItemImage item={selected} alt={selected.name} /></div><div className="detail-info"><h2>{selected.name}</h2><div className="detail-tags"><span className={`rarity ${rarityClass(selected.rarity)}`}>{selected.rarity}</span><span>{normalizedItemKind(selected)}</span>{selected.category && selected.category !== normalizedItemKind(selected) && <span>{selected.category}</span>}</div><p className="detail-description">{selected.description}</p><h3>Hatás</h3><p className="detail-effect">{selected.effect}</p><p className="base-price">Alapár: {selected.rarity === 'Artefaktum' && selected.price == null ? 'felbecsülhetetlen' : `${money(selected.price)} gp`} · bolti szorzó: ×{String(shop.multiplier).replace('.', ',')}</p><button type="button" className="remove-shop-item" onClick={openRemoval}><Trash size={18} aria-hidden="true" /> Eltávolítás a boltból</button><ShopPriceEditor item={selected} shop={shop} value={shopPriceDraft} onChange={setShopPriceDraft} onSave={saveShopPrice} onReset={resetShopPrice} /><div className="purchase-controls"><div className="quantity-wrap"><label>Mennyiség</label><div className="stepper"><button aria-label="Mennyiség csökkentése" onClick={() => setQuantity(q => Math.max(1, q - 1))} disabled={quantity <= 1}><Minus size={18} /></button><output>{selected.stock ? quantity : 0}</output><button aria-label="Mennyiség növelése" onClick={() => setQuantity(q => Math.min(selected.stock, q + 1))} disabled={quantity >= selected.stock}><Plus size={18} /></button></div></div><div className="price-wrap"><label htmlFor="sale-price">Eladási ár (gp)</label><div className="price-input"><Coins size={22} aria-hidden="true" /><input id="sale-price" type="number" min="0" step="1" value={salePrice} onChange={event => { setSalePrice(event.target.value); setSaleNegotiation(null); }} /><span className="price-arrows"><button aria-label="Ár növelése 50 arannyal" onClick={() => changeSalePriceBy(50)}><CaretUp size={14} /></button><button aria-label="Ár csökkentése 50 arannyal" onClick={() => changeSalePriceBy(-50)}><CaretDown size={14} /></button></span></div></div></div><button className="button button-primary sell-button" onClick={sell} disabled={selected.stock < quantity || selected.stock === 0 || salePrice === '' || Number(salePrice) < 0}><Coins size={25} /><span>{selected.stock ? 'Eladás' : 'Elfogyott'}</span><strong>{selected.stock && salePrice !== '' ? `${money((Number(salePrice) || 0) * quantity)} gp` : ''}</strong></button></div></div></section>}
+    {selected && <section className="quick-sale" aria-label="Gyors eladás" inert={managementOpen || ['remove', 'delete-shop'].includes(dialog)}><button className="quick-sale-name" type="button" aria-expanded={showSelectedDescription} aria-controls="selected-description" onClick={() => setShowSelectedDescription(open => !open)}><small>Kiválasztott tárgy · leírás</small><strong>{selected.name}</strong></button><button className="quick-stock-button" type="button" onClick={() => openAdjustDialog(selected.id)} aria-label={`${selected.name} készletének módosítása, jelenleg ${selected.stock} darab`}><Package size={17} /> {selected.stock} db</button><label>Db<div className="quick-stepper"><button aria-label="Gyors mennyiség csökkentése" disabled={quantity <= 1} onClick={() => setQuantity(q => Math.max(1, q - 1))}><Minus size={16} /></button><output>{selected.stock ? quantity : 0}</output><button aria-label="Gyors mennyiség növelése" disabled={quantity >= selected.stock} onClick={() => setQuantity(q => Math.min(selected.stock, q + 1))}><Plus size={16} /></button></div></label><label>Eladási ár (gp)<input aria-label="Alkalmi eladási ár" type="number" min="0" step="1" value={salePrice} onChange={event => { setSalePrice(event.target.value); setSaleNegotiation(null); }} /></label><button type="button" className="quick-bargain-button" onClick={openBargaining}><Scales size={18} /><span className="bargain-long">Alku és felvásárlás</span><span className="bargain-short">Alku</span></button><button className="button button-primary" disabled={selected.stock < quantity || selected.stock === 0 || salePrice === '' || Number(salePrice) < 0} onClick={sell}><Coins size={18} /> {selected.stock ? 'Eladás' : 'Elfogyott'}</button><div id="selected-description" className="selected-description" hidden={!showSelectedDescription}><div><span className={`rarity ${rarityClass(selected.rarity)}`}>{selected.rarity}</span><button type="button" aria-label="Leírás bezárása" onClick={() => setShowSelectedDescription(false)}><X size={18} /></button></div><p>{selected.description}</p><strong>Hatás</strong><p>{selected.effect}</p><button type="button" className="remove-shop-item" onClick={openRemoval}><Trash size={18} aria-hidden="true" /> Eltávolítás a boltból</button></div></section>}
     </>}
     </fieldset>}
     <ManagementDrawer open={managementOpen} dialogOpen={Boolean(dialog)} onClose={closeManagement} onAction={openManagementAction} shop={shop} catalogCount={catalog.length} hasSaleBar={dataReady && Boolean(selected)} dataState={dataState} />
     {toast && <div className="toast" role="status"><CheckCircle size={21} weight="fill" /><span>{typeof toast === 'string' ? toast : toast.message}</span>{typeof toast === 'object' && toast.undoId === latestActivity?.id && canUndo && <button className="toast-undo" onClick={undoActivity}>Visszavonás</button>}<button aria-label="Értesítés bezárása" onClick={() => setToast('')}><X size={16} /></button></div>}
-    {dialog && <div className={`dialog-backdrop ${dialog === 'guide' ? `guide-backdrop ${dataReady && selected ? '' : 'no-sale-bar'}` : ''}`} onKeyDown={handleDialogKeys} onMouseDown={event => { if (event.target === event.currentTarget) { closeDialog(); } }}><div className={`dialog ${['catalog', 'base-catalog', 'random', 'add', 'import', 'activity', 'procurement'].includes(dialog) ? 'dialog-wide' : ''} ${editingMagicItem ? 'magic-editor-dialog' : ''} ${dialog === 'shop' ? 'shop-editor-dialog' : ''} ${dialog === 'cloud' ? 'cloud-data-dialog' : ''} ${dialog === 'guide' ? 'user-guide-dialog' : ''}`} role={dialog === 'delete-shop' ? 'alertdialog' : 'dialog'} aria-modal="true" aria-describedby={dialog === 'delete-shop' ? 'delete-shop-description' : undefined} aria-label={{ 'delete-shop': 'Bolt törlése', remove: 'Tárgy eltávolítása a boltból', shop: 'Bolt adatai', add: 'Tárgy hozzáadása', adjust: 'Készlet módosítása', activity: 'Eladásnapló', procurement: 'Beszerzések', catalog: 'Saját tárgylista', 'base-catalog': 'SRD alaplista', random: 'Véletlen készlet', import: 'JSON import', cloud: 'Helyi és felhőadatok', guide: 'Útmutató' }[dialog]}>{!editingMagicItem && dialog !== 'shop' && dialog !== 'guide' && <div className="dialog-heading"><h2>{{ 'delete-shop': 'Bolt törlése', remove: 'Eltávolítás a boltból', add: 'Új tárgy a boltba', adjust: 'Készlet módosítása', activity: 'Eladásnapló', procurement: 'Beszerzések', catalog: 'Saját tárgylista', 'base-catalog': 'SRD alaplista', random: 'Véletlen készlet', import: 'Tárgyak importálása JSON-ből', cloud: 'Helyi és felhőadatok' }[dialog]}</h2><button aria-label="Bezárás" onClick={closeDialog}><X size={22} /></button></div>}
+    {dialog && <div className={`dialog-backdrop ${dialog === 'bargain' ? 'bargaining-backdrop' : ''} ${dialog === 'guide' ? `guide-backdrop ${dataReady && selected ? '' : 'no-sale-bar'}` : ''}`} onKeyDown={handleDialogKeys} onMouseDown={event => { if (event.target === event.currentTarget) { closeDialog(); } }}><div className={`dialog ${['catalog', 'base-catalog', 'random', 'add', 'import', 'activity', 'procurement'].includes(dialog) ? 'dialog-wide' : ''} ${editingMagicItem ? 'magic-editor-dialog' : ''} ${dialog === 'shop' ? 'shop-editor-dialog' : ''} ${dialog === 'cloud' ? 'cloud-data-dialog' : ''} ${dialog === 'guide' ? 'user-guide-dialog' : ''} ${dialog === 'bargain' ? 'bargaining-panel' : ''}`} role={dialog === 'delete-shop' ? 'alertdialog' : 'dialog'} aria-modal="true" aria-describedby={dialog === 'delete-shop' ? 'delete-shop-description' : undefined} aria-label={{ 'delete-shop': 'Bolt törlése', remove: 'Tárgy eltávolítása a boltból', shop: 'Bolt adatai', add: 'Tárgy hozzáadása', adjust: 'Készlet módosítása', activity: 'Eladásnapló', procurement: 'Beszerzések', catalog: 'Saját tárgylista', 'base-catalog': 'SRD alaplista', random: 'Véletlen készlet', import: 'JSON import', cloud: 'Helyi és felhőadatok', guide: 'Útmutató', bargain: 'Kereskedői ajánlat' }[dialog]}>{!editingMagicItem && dialog !== 'shop' && dialog !== 'guide' && dialog !== 'bargain' && <div className="dialog-heading"><h2>{{ 'delete-shop': 'Bolt törlése', remove: 'Eltávolítás a boltból', add: 'Új tárgy a boltba', adjust: 'Készlet módosítása', activity: 'Eladásnapló', procurement: 'Beszerzések', catalog: 'Saját tárgylista', 'base-catalog': 'SRD alaplista', random: 'Véletlen készlet', import: 'Tárgyak importálása JSON-ből', cloud: 'Helyi és felhőadatok' }[dialog]}</h2><button aria-label="Bezárás" onClick={closeDialog}><X size={22} /></button></div>}
+      {dialog === 'bargain' && shop && <BargainingDrawer shop={shop} catalog={catalog} selected={selected} salePrice={salePrice} onApplySale={applyBargainedSale} onBuyback={buyFromPlayer} onOpenCatalog={() => { setCatalogEditingId(null); setCatalogDraft({ name: '', rarity: 'Gyakori', price: 100, kind: 'Csodás tárgy', category: '', image: defaultImageFor('Csodás tárgy'), teaser: '', description: '', effect: '' }); setDialog('catalog'); }} onClose={closeDialog} />}
       {dialog === 'guide' && <UserGuide onClose={closeDialog} />}
       {dialog === 'cloud' && <CloudDataDialog firebaseReady={firebaseReady} onConnectCloud={connectCloud} onSignOut={disconnectCloud} dataState={dataState} onDataAction={handleDataAction} onRetryCloud={() => dataState.pending ? dataSession.flush() : dataSession.setUser(user)} />}
       {dialog === 'delete-shop' && <div className="delete-shop-confirmation">

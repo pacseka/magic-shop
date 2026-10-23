@@ -1,0 +1,75 @@
+.bargaining-backdrop{bottom:86px;display:block;padding:0;background:#21181170}
+.dialog.bargaining-panel{position:absolute;top:0;right:0;bottom:0;display:flex;flex-direction:column;width:min(50vw,560px);max-height:none;overflow:hidden;padding:0;border:0;border-left:1px solid #9f7b58;border-radius:0;background:#f3ead9 url('/assets/parchment.png') center/900px 900px;box-shadow:-16px 0 36px #21181152;color:#39261e}
+.bargaining-drawer{display:flex;flex-direction:column;min-height:0;width:100%;height:100%}
+.bargaining-header{position:relative;flex:none;min-height:145px;padding:27px 31px 18px;overflow:hidden;border-bottom:1px solid #b7a68f}
+.bargaining-header>img{position:absolute;right:15px;top:42px;width:140px;height:88px;object-fit:contain;opacity:.9}
+.bargaining-header h2,.bargaining-header p{position:relative;z-index:1;margin:0}
+.bargaining-header h2{max-width:100%;color:#681f1a;font:700 38px/1 'Cormorant Garamond',Georgia,serif}
+.bargaining-header p{margin-top:5px;color:#544235;font-size:18px}
+@media(max-width:900px){.bargaining-header>img{right:5px;top:57px;width:105px;height:70px}.bargaining-header p{max-width:calc(100% - 105px);font-size:15px}}
+.bargaining-close{position:absolute;top:13px;right:16px;z-index:2;display:grid;place-items:center;width:44px;height:44px;border:0;background:#f3ead9b8;color:#681f1a}
+.bargaining-body{display:flex;flex:1;flex-direction:column;min-height:0;padding:0}
+.dialog .bargaining-body{display:flex;gap:0;padding:0}
+.bargaining-fields{min-height:0;flex:1;overflow-y:auto;overscroll-behavior:contain;padding:17px 31px 18px}
+.bargaining-mode{display:grid;grid-template-columns:1fr 1fr;margin-bottom:7px;border:1px solid #b79c7b;border-radius:5px;overflow:hidden}
+.bargaining-mode button{min-height:57px;padding:6px 9px;border:0;background:#fff9ee64;color:#681f1a;font:700 16px/1.14 Georgia,serif}
+.bargaining-mode button+button{border-left:1px solid #b79c7b}
+.bargaining-mode button.is-active{background:#741d1b;color:#fff5e7}
+.bargaining-mode button:disabled{opacity:.45}
+.bargaining-mode small{display:block;margin-top:3px;font:400 12px/1.1 Georgia,serif}
+.bargaining-section{display:grid;gap:10px;padding:16px 0;border-bottom:1px solid #bda98d}
+.bargaining-section h3{margin:0;color:#681f1a;font:700 25px/1.1 'Cormorant Garamond',Georgia,serif}
+.bargaining-section p{margin:0;color:#604d3d;font-size:14px;line-height:1.35}
+.bargaining-section label{color:#47362a;font-size:14px;font-weight:700}
+.bargaining-section input,.bargaining-section select{min-width:0;min-height:42px;padding:8px 10px;border:1px solid #a9937f;border-radius:5px;background:#fff9ee;color:#292018;font:16px Georgia,serif}
+.bargaining-search{display:flex;align-items:center;gap:8px;height:46px;padding:0 9px;border:1px solid #a9937f;border-radius:5px;background:#fff9ee;color:#681f1a}
+.dialog .bargaining-search{display:flex;flex-direction:row}
+.bargaining-search input{flex:1;width:100%;padding:0;border:0;background:transparent;outline:0}
+.bargaining-results{max-height:176px;overflow:auto;border:1px solid #bda98d;border-radius:5px;background:#fff9ee}
+.bargaining-results button{display:flex;justify-content:space-between;gap:8px;width:100%;min-height:42px;padding:8px 10px;border:0;border-bottom:1px solid #dacbb8;background:transparent;color:#39261e;text-align:left;font:15px Georgia,serif}
+.bargaining-results button:hover,.bargaining-results button[aria-selected=true]{background:#741d1b16}
+.bargaining-results button small{color:#68574a;white-space:nowrap}
+.bargaining-results p{padding:11px}
+.bargaining-item{display:flex;align-items:center;gap:12px;min-width:0;min-height:76px;padding:6px 8px;border:1px solid #c3b093;border-radius:5px;background:#fff9ee70}
+.bargaining-item-image{flex:0 0 67px;height:66px;overflow:hidden}
+.bargaining-item-image img{width:100%;height:100%;object-fit:contain;mix-blend-mode:multiply}
+.bargaining-item>span:last-child{display:grid;gap:3px;min-width:0}
+.bargaining-item strong{color:#2d211a;font-size:17px}
+.bargaining-item small{display:-webkit-box;overflow:hidden;color:#6a5849;font-size:13px;line-height:1.2;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.bargaining-inline,.bargaining-value{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.dialog .bargaining-inline{display:flex;flex-direction:row;align-items:center;justify-content:space-between}
+.bargaining-value{font-size:17px}
+.bargaining-value strong{color:#39261e;font-size:20px;white-space:nowrap}
+.bargaining-price{display:flex;align-items:center;gap:7px;white-space:nowrap}
+.bargaining-price input{width:105px;text-align:right}
+.bargaining-stepper{display:flex;align-items:center;overflow:hidden;border:1px solid #a9937f;border-radius:5px;background:#fff9ee}
+.bargaining-stepper button{display:grid;place-items:center;width:38px;height:42px;border:0;background:transparent;color:#681f1a}
+.bargaining-stepper input{width:60px;min-height:42px;padding:5px 0;border:0;border-left:1px solid #cabcaa;border-right:1px solid #cabcaa;border-radius:0;text-align:center}
+.bargaining-stepper input::-webkit-inner-spin-button{appearance:none}
+.bargaining-text-action{justify-self:start;min-height:34px;padding:0;border:0;background:transparent;color:#681f1a;font:700 13px Georgia,serif;text-decoration:underline;text-underline-offset:3px}
+.bargaining-house-rule{display:flex;align-items:flex-start;gap:8px;padding:10px 11px;border:1px solid #e1bd83;border-radius:5px;background:#f7e6c7;color:#4d3828!important}
+.bargaining-house-rule svg{flex:none;color:#681f1a}
+.bargaining-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.bargaining-grid label{display:grid;gap:5px}
+.bargaining-grid select,.bargaining-grid input{width:100%}
+.bargaining-hint{font-size:12px!important;color:#725f4d!important}
+.bargaining-methods{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:0;padding:0;border:0}
+.bargaining-methods legend{margin-bottom:6px;color:#47362a;font-size:14px;font-weight:700}
+.bargaining-methods label{display:flex;align-items:center;justify-content:center;min-height:42px;padding:6px;border:1px solid #b79c7b;border-radius:5px;background:#fff9ee70;color:#39261e;text-align:center;font-size:12px!important;font-weight:700;cursor:pointer}
+.dialog .bargaining-methods label{display:flex;align-items:center;justify-content:center}
+.bargaining-methods label.is-active{border-color:#681f1a;background:#741d1b;color:#fff5e7}
+.bargaining-methods label:focus-within{outline:3px solid #a06937;outline-offset:2px}
+.bargaining-methods input{position:absolute;opacity:0;width:1px;height:1px;min-height:1px}
+.bargaining-roll{width:158px}
+.bargaining-result{padding:9px 11px!important;border:1px solid #bba98d;border-radius:5px;background:#f8f0df}
+.bargaining-result.is-success,.bargaining-stock-note{border-color:#a8c4a1!important;background:#e5f0da!important;color:#35502e!important}
+.bargaining-result.is-failure{border-color:#d6ad9a;background:#f4dfd6}
+.bargaining-stock-note{display:flex;gap:8px;align-items:center;padding:9px 11px;border:1px solid;border-radius:5px}
+.bargaining-final{border-bottom:0}
+.bargaining-error{margin:4px 0;color:#8c211d;font-size:14px}
+.bargaining-actions{position:relative;flex:none;display:flex;justify-content:flex-end;gap:8px;margin:0;padding:12px 31px calc(16px + env(safe-area-inset-bottom));border-top:1px solid #bda98d;background:#f3ead9 url('/assets/parchment.png') center/900px 900px}
+.bargaining-actions .button{min-height:46px;padding:0 11px;font-size:14px;white-space:normal;text-align:center}
+.bargaining-actions .button-primary{flex:1}
+.bargaining-drawer button:focus-visible,.bargaining-drawer input:focus-visible,.bargaining-drawer select:focus-visible{outline:3px solid #a06937;outline-offset:2px}
+@media(max-width:760px){.dialog.bargaining-panel{width:min(84vw,560px)}.bargaining-header{padding:23px 22px 16px}.bargaining-header h2{font-size:42px}.bargaining-fields{padding:13px 21px 18px}.bargaining-actions{padding:11px 21px}}
+@media(max-width:560px){.bargaining-backdrop{bottom:155px}.dialog.bargaining-panel{width:100%}.bargaining-header{min-height:112px}.bargaining-header h2{font-size:36px}.bargaining-header p{font-size:15px}.bargaining-header>img{display:none}.bargaining-section{padding:13px 0}.bargaining-section h3{font-size:23px}.bargaining-grid{gap:7px}.bargaining-section input,.bargaining-section select{font-size:14px}.bargaining-mode button{font-size:14px}.bargaining-actions .button{font-size:12px}}
