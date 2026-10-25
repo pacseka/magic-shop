@@ -73,6 +73,7 @@ export function ManagementDrawer({ open, dialogOpen, onClose, onAction, shop, ca
           <div className="management-group-heading"><Cloud size={28} aria-hidden="true" /><div><h3 id="management-data-title">Adatok és felhő</h3><p>Importálás, exportálás és kézi másolás.</p></div></div>
           <DrawerAction disabled={!canEdit} icon={UploadSimple} title="JSON import" description="Tárgyak betöltése fájlból vagy szövegből." onClick={() => onAction('import')} />
           <DrawerAction disabled={!canEdit} icon={DownloadSimple} title="JSON export" description="Az éppen használt boltok és katalógus mentése." onClick={() => onAction('export')} />
+          <DrawerAction disabled={!canEdit} icon={UploadSimple} title="Teljes JSON visszaállítás" description="Exportált boltok és tárgyak teljes visszatöltése." onClick={() => onAction('restore-json')} />
           <DrawerAction icon={Cloud} title="Helyi és felhőadatok" description="Aktív tároló, fiók és másolás." trailing={<span className={`management-cloud-status ${dataState.pending || !dataState.ready ? 'is-pending' : ''}`}>{cloudLabel}</span>} onClick={() => onAction('cloud')} />
         </section>
       </div>

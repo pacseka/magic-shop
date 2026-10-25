@@ -53,6 +53,7 @@ export const guideSections = [
         title: 'Tárgyak importálása JSON-ből',
         text: 'A Kezelés → JSON import felületen fájlt választhatsz vagy JSON-szöveget illeszthetsz be. Egy tárgy, tömb és az alkalmazás exportjának catalog része is használható.',
         steps: ['Kattints a JSON ellenőrzése gombra.', 'Nézd át az új, már létező és hibás tételek számát.', 'Az Importálás gombbal csak a saját tárgylistát bővíted; a bolti készlet nem változik.'],
+        note: 'A teljes export boltokkal és készlettel együtt a Kezelés → Teljes JSON visszaállítás művelettel tölthető vissza.',
       },
     ],
   },
@@ -204,7 +205,13 @@ export const guideSections = [
       },
       {
         title: 'JSON-export',
-        text: 'A Kezelés → JSON export az éppen aktív boltokat, naplókat és saját tárgylistát fájlba menti. Az SRD alaplista nem része az exportnak. A fájl a saját tárgyak későbbi importálásához is használható.',
+        text: 'A Kezelés → JSON export az éppen aktív boltokat, készleteket, beszerzéseket, naplókat és saját tárgylistát fájlba menti. Az SRD alaplista nem része az exportnak. A fájl a saját tárgyak későbbi importálásához vagy a teljes állapot visszaállításához használható.',
+      },
+      {
+        title: 'Teljes JSON visszaállítás',
+        text: 'A Kezelés → Teljes JSON visszaállítás az alkalmazás 2-es formátumú teljes exportját olvassa be. Ellenőrzés után megmutatja a boltok, tárgyak, bolti tételek, naplóbejegyzések és beszerzések számát. A megerősítés a jelenleg aktív helyi vagy bejelentkezett felhős adatállományt teljesen lecseréli.',
+        steps: ['Válaszd ki az exportált JSON-fájlt vagy illeszd be a tartalmát.', 'Ellenőrizd az előnézetet és az aktív célhelyet.', 'Erősítsd meg a teljes cserét. Az előző változatot a Kezelés → Helyi és felhőadatok ablakban állíthatod vissza.'],
+        note: 'A felhőadatok visszaállításához működő internetkapcsolat szükséges. A JSON import továbbra is csak a saját tárgylistát bővíti.',
       },
     ],
   },

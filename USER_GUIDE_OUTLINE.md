@@ -40,7 +40,8 @@ Az útmutató elsődleges helye az alkalmazás **Kezelés → Útmutató** felü
 - **Aktív adatforrás felismerése:** kijelentkezve a külön helyi adatok, bejelentkezve az adott fiók felhőadatai aktívak. A bejelentkezés nem másolja át magától a helyi készletet.
 - **Kapcsolat nélkül:** a bejelentkezett fiók saját offline másolatával lehet folytatni a munkát; a függő változások visszakapcsolódáskor feltöltődnek. Ha nincs ilyen másolat, a helyi adatok nem jelennek meg a felhőadatok helyén.
 - **Kézi másolás a két adatkészlet között:** a felhő helyire másolása és a helyi felhőbe feltöltése mindig a teljes céladatkészletet cseréli le. Megerősítés szükséges, az előző célváltozatról visszaállítható mentés készül.
-- **JSON-export:** az éppen aktív boltok és a saját tárgylista mentése. Az SRD alaplista nem része az exportnak.
+- **JSON-export:** az éppen aktív boltok, készletek, beszerzések, naplók és a saját tárgylista mentése. Az SRD alaplista nem része az exportnak.
+- **Teljes JSON visszaállítás:** az exportált fájl előnézete és megerősített visszatöltése a jelenleg aktív helyi vagy felhős adatkészlet helyére, az előző állapot visszaállítható mentésével. A tárgyakat hozzáadó JSON import ettől külön művelet.
 - **Alkalmazásverzió:** az aktuális verzió a Kezelés fiókban és az útmutató fejlécében látható; a változások a repository `CHANGELOG.md` fájljában követhetők.
 - **Kijelentkezés:** visszatérés a külön helyi adatokhoz automatikus másolás nélkül.
 

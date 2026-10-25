@@ -28,6 +28,10 @@
 .management-action-trailing{max-width:115px;color:#5d5748;font-size:12px;text-align:right}
 .management-cloud-status:before{display:inline-block;width:7px;height:7px;margin-right:5px;border-radius:50%;background:#629c65;content:''}
 .management-cloud-details{font-size:14px}
+.ledger-restore-shops{display:grid;gap:5px;max-height:140px;overflow:auto;margin-top:10px}
+.ledger-restore-shops span{display:block;padding:5px 8px;border:1px solid #bda98d;border-radius:3px;background:#fff9ee77}
+.ledger-json-restore .json-import-review p{margin:7px 0}
+.ledger-json-restore .dialog-actions{flex-wrap:wrap}
 .cloud-data-dialog{width:min(100%,620px);background:#f3ead9 url('/assets/parchment.png') center/900px 900px}
 .cloud-data-dialog .management-cloud-details>p:first-child{color:#681f1a;font-size:17px}
 .management-cloud-details p{margin:0 0 8px;line-height:1.35}

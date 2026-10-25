@@ -2,6 +2,12 @@
 
 Az alkalmazás verziója a `package.json` fájlban szerepel. A `0.x` változatok fejlesztés alatt állnak: az új funkciók a második, a javítások a harmadik számban jelennek meg; az első szám a későbbi, nem kompatibilis változásokat jelöli.
 
+## 0.4.0 – 2026-10-25
+
+- A teljes JSON export boltokkal, készlettel, beszerzésekkel, naplóval és saját katalógussal együtt visszatölthető előnézet és megerősítés után.
+- A visszatöltés a jelenleg aktív helyi vagy felhős adatkészletet cseréli le, és az előző állapotból visszaállítható másolatot készít.
+- A csak tárgyakat hozzáadó JSON import külön művelet marad.
+
 ## 0.3.0 – 2026-10-23
 
 - Az alku sikerlépcsői a DC elérésénél 5%, DC+5-nél 10%, DC+10-nél 15% egyszeri kedvezményt vagy felvásárlási ajánlatemelést javasolnak.

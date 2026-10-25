@@ -38,6 +38,8 @@ Magic items use the nine D&D 2024 magic-item categories. Creating or editing an 
 
 The shared magic-item catalog should accept machine-readable JSON import from a file or pasted text. Accept a single item, an array, or the catalog from the app's JSON export; preview valid entries, duplicates, and errors before applying. Import catalog definitions without changing any shop's stock.
 
+The full JSON export is also a restorable backup. Keep catalog-only JSON import separate from a full-export restore that previews the shops and data counts, explicitly confirms replacement of the currently active local or signed-in cloud ledger, and keeps the previous target dataset restorable. Never mix the signed-out local ledger with a signed-in cloud account during restore.
+
 Example magic items are development-only starter data. A fresh production install must start with an empty catalog and shop inventory, and deployment must not overwrite or delete already saved local or Firebase data.
 
 The user wants this repository published at its GitHub Pages project URL through GitHub Actions, without a custom domain. Keep the existing local and Sites builds working alongside the Pages build.

@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createLedgerSession } from '../src/ledgerSession.js';
 import { normalizeLedger, removeShop, storageKey } from '../src/shopData.js';
+import { previewLedgerJsonRestore } from '../src/ledgerJsonRestore.js';
 
 const ledger = (name, stock = 3) => normalizeLedger({ shops: [{ id: name, name, multiplier: 1.5, items: [{ id: 'wand', name: 'Pálca', rarity: 'Ritka', price: 400, shopPrice: 500, stock }], activity: [] }] });
 const user = { uid: 'first', displayName: 'Teszt' };
@@ -65,6 +66,43 @@ test('uploading local data replaces cloud data and keeps a restorable cloud back
   assert.equal(session.getSnapshot().user.uid, user.uid);
   await session.restoreCloudBackup();
   assert.deepEqual(env.cloud.get(user.uid), ledger('Felhő'));
+});
+
+test('full JSON restore replaces local shops and catalog, then restores the previous local ledger', async () => {
+  const env = setup();
+  const session = env.session();
+  await session.setUser(null);
+  const imported = ledger('Mentésből', 9);
+  await session.restoreJson(previewLedgerJsonRestore(JSON.stringify({ schemaVersion: 2, ...imported })).ledger);
+  assert.deepEqual(session.getSnapshot().ledger, imported);
+  assert.deepEqual(JSON.parse(env.storage.getItem(storageKey)).shops, imported.shops);
+  assert.equal(session.getSnapshot().hasLocalBackup, true);
+  session.restoreLocalBackup();
+  assert.deepEqual(session.getSnapshot().ledger, ledger('Helyi'));
+});
+
+test('full JSON restore replaces only the signed-in cloud ledger and can undo the replacement', async () => {
+  const env = setup();
+  const session = env.session();
+  await session.setUser(user);
+  const imported = ledger('Mentésből', 9);
+  await session.restoreJson(previewLedgerJsonRestore(JSON.stringify({ schemaVersion: 2, ...imported })).ledger);
+  assert.deepEqual(env.cloud.get(user.uid), imported);
+  assert.deepEqual(JSON.parse(env.storage.getItem(storageKey)).shops, ledger('Helyi').shops);
+  assert.equal(session.getSnapshot().hasCloudBackup, true);
+  await session.restoreCloudBackup();
+  assert.deepEqual(env.cloud.get(user.uid), ledger('Felhő'));
+});
+
+test('offline cloud JSON restore refuses replacement and keeps both datasets', async () => {
+  const env = setup();
+  const session = env.session();
+  await session.setUser(user);
+  env.setOffline(true);
+  session.setOnline(false);
+  await assert.rejects(session.restoreJson(ledger('Mentésből')), /internetkapcsolat/);
+  assert.deepEqual(env.cloud.get(user.uid), ledger('Felhő'));
+  assert.deepEqual(JSON.parse(env.storage.getItem(storageKey)).shops, ledger('Helyi').shops);
 });
 
 test('cloud copies stay accepted across reloads without conflict checks', async () => {

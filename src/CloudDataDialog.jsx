@@ -4,8 +4,8 @@ import { DownloadSimple, UploadSimple } from '@phosphor-icons/react';
 const transferLabels = {
   download: { title: 'Felhő másolása erre az eszközre', detail: 'Ez lecseréli az ezen az eszközön tárolt összes boltodat, tárgyadat, készletedet és naplódat. Továbbra is a felhőadatokat használod.' },
   upload: { title: 'Helyi adatok feltöltése a felhőbe', detail: 'Ez lecseréli a fiókod felhőben tárolt összes boltját, tárgyát, készletét és naplóját az ezen az eszközön tárolt adatokra. Ezután ezt a felhős változatot használod.' },
-  'restore-local': { title: 'Előző helyi adatok visszaállítása', detail: 'Az utolsó másolás előtti helyi adatokat állítjuk vissza. A felhőadatok megmaradnak.' },
-  'restore-cloud': { title: 'Előző felhőadatok visszaállítása', detail: 'Az utolsó feltöltés előtti felhőadatok váltják fel a fiókod jelenlegi boltjait, tárgyait, készleteit és naplóit.' },
+  'restore-local': { title: 'Előző helyi adatok visszaállítása', detail: 'Az utolsó teljes adatcsere előtti helyi adatokat állítjuk vissza. A felhőadatok megmaradnak.' },
+  'restore-cloud': { title: 'Előző felhőadatok visszaállítása', detail: 'Az utolsó teljes adatcsere előtti felhőadatok váltják fel a fiókod jelenlegi boltjait, tárgyait, készleteit és naplóit.' },
 };
 
 export function CloudDataDialog({ firebaseReady, onConnectCloud, onSignOut, dataState, onDataAction, onRetryCloud }) {

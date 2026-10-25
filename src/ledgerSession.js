@@ -130,6 +130,21 @@ export function createLedgerSession({ storage = localStorage, seedItems = [], au
     publish({});
   }
 
+  async function restoreJson(nextLedger) {
+    if (!state.authReady || !state.ready || state.busy) throw new Error('Az aktív adatok még nem módosíthatók.');
+    const ledger = normalizeLedger(nextLedger);
+    if (state.user) {
+      if (!online) throw new Error('A felhőadatok visszaállításához internetkapcsolat szükséges.');
+      const uid = state.user.uid;
+      await replaceCloud(ledger);
+      if (state.user?.uid !== uid || state.ledger !== ledger) throw new Error('A fiók megváltozott a visszaállítás közben.');
+    } else {
+      backup(localBackupKey, loadLedger(seedItems, storage));
+      storage.setItem(storageKey, JSON.stringify(payload(ledger)));
+      publish({ ledger, status: '' });
+    }
+  }
+
   function restoreLocalBackup() {
     if (state.busy) return;
     const previous = read(localBackupKey)?.ledger;
@@ -175,7 +190,7 @@ export function createLedgerSession({ storage = localStorage, seedItems = [], au
   return {
     getSnapshot: () => state,
     subscribe: listener => { listeners.add(listener); return () => listeners.delete(listener); },
-    setUser, update, flush, setOnline, copyCloudToLocal, restoreLocalBackup,
+    setUser, update, flush, setOnline, copyCloudToLocal, restoreLocalBackup, restoreJson,
     uploadLocal: () => replaceCloud(loadLedger(seedItems, storage)),
     restoreCloudBackup: () => {
       const previous = state.user && read(cloudBackupKey(state.user.uid))?.ledger;
